@@ -6,6 +6,7 @@ import 'package:placement_cell/screens/SplashScreen.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../widgets/InputForm.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
             primaryColor: Color(0xFF418C66), canvasColor: Colors.white),
         routes: {
           'homepage': (context) => HomePage(),
-          'authscreen': (context) => AuthScreen()
+          'authscreen': (context) => AuthScreen(),
+          'inputform': (context) => InputForm()
         },
         home: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
