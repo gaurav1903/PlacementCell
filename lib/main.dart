@@ -3,8 +3,12 @@ import 'package:placement_cell/screens/AuthScreen.dart';
 import 'package:placement_cell/screens/HomeScreen.dart';
 import 'package:placement_cell/screens/SplashScreen.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

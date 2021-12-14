@@ -84,7 +84,7 @@ class _AuthFormState extends State<AuthForm> {
                             return 'length must be 7 or greater';
                           return null;
                         },
-                        onSaved: (val) {
+                        onChanged: (val) {
                           if (val != null) _userpassword = val;
                         },
                         obscureText: true,
@@ -94,6 +94,8 @@ class _AuthFormState extends State<AuthForm> {
                         TextFormField(
                           key: ValueKey('reenter password'),
                           validator: (val) {
+                            log(_userpassword);
+                            log(val.toString() + " " + _userpassword);
                             if (val != _userpassword)
                               return "PASS DO NOT MATCH";
                             return null;
