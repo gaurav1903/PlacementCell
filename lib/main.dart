@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:placement_cell/screens/AuthScreen.dart';
 import 'package:placement_cell/screens/HomeScreen.dart';
@@ -28,6 +29,13 @@ class MyApp extends StatelessWidget {
           'homepage': (context) => HomePage(),
           'authscreen': (context) => AuthScreen()
         },
-        home: SplashScreen());
+        home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (ctx, snap) {
+              if (snap.hasData)
+                return SplashScreen('homepage');
+              else
+                return SplashScreen('authscreen');
+            }));
   }
 }

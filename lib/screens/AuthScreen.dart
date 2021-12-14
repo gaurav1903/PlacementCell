@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/AuthForm.dart';
+import 'package:placement_cell/userdata.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -21,8 +22,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   var isloading = false;
 
-  void _submitAuthForm(
-      String email, String username, String password, bool islogin) async {
+  void _submitAuthForm(String email, String username, String password,
+      bool islogin, Mode mode) async {
     final auth = FirebaseAuth.instance;
     var authResult;
     setState(() {
@@ -38,10 +39,17 @@ class _AuthScreenState extends State<AuthScreen> {
         authResult = await auth.createUserWithEmailAndPassword(
             email: email, password: password);
         log("this ran");
+        String m;
+        if (mode == Mode.Recruiter)
+          m = "Recruiter";
+        else if (mode == Mode.PlacementOfficer)
+          m = "PlacementOfficer";
+        else
+          m = "Student";
         FirebaseFirestore.instance
             .collection('users')
             .doc(auth.currentUser?.uid)
-            .set({'username': username, 'email': email});
+            .set({'username': username, 'email': email, 'role': m});
       }
     } on PlatformException catch (err) {
       var mess = "Please check credentials";

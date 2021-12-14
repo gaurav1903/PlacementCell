@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
+  String s;
+  SplashScreen(this.s);
   @override
   Widget build(BuildContext context) {
     var t = Timer(Duration(seconds: 2), () {
-      Navigator.of(context).pushNamed('authscreen');
+      Navigator.of(context).pushNamed(s);
     });
     return Container(
       color: Theme.of(context).canvasColor,

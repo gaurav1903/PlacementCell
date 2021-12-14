@@ -6,7 +6,7 @@ import 'package:placement_cell/userdata.dart';
 class AuthForm extends StatefulWidget {
   var isloading;
   final void Function(
-          String email, String password, String username, bool islogin)
+          String email, String password, String username, bool islogin, Mode m)
       saveauthform;
   AuthForm(this.saveauthform, this.isloading);
   @override
@@ -30,7 +30,7 @@ class _AuthFormState extends State<AuthForm> {
     if (isvalid == true) {
       _formkey.currentState?.save();
       log(_useremail + " " + _userpassword);
-      widget.saveauthform(_useremail, _username, _userpassword, _islogin);
+      widget.saveauthform(_useremail, _username, _userpassword, _islogin, mode);
       _formkey.currentState?.reset();
     }
     // FirebaseFirestore.instance.collection(collectionPath)
@@ -105,52 +105,53 @@ class _AuthFormState extends State<AuthForm> {
                               InputDecoration(labelText: 'Reenter Password'),
                         ),
                       SizedBox(height: 10),
-                      DropdownButton(
-                          key: ValueKey("mode"),
-                          value: mode,
-                          onTap: () {},
-                          onChanged: (val) {
-                            setState(() {
-                              mode = val;
-                            });
-                          },
-                          items: [
-                            DropdownMenuItem<String>(
-                              key: ValueKey('Role'),
-                              value: null,
-                              child: Text('Choose Role'),
-                            ),
-                            DropdownMenuItem(
-                              key: ValueKey('Student'),
-                              value: Mode.Student,
-                              child: Text('Student'),
-                              onTap: () {
-                                setState(() {
-                                  mode = Mode.Student;
-                                });
-                              },
-                            ),
-                            DropdownMenuItem(
-                              key: ValueKey('recruiter'),
-                              child: Text('Recruiter'),
-                              value: Mode.Recruiter,
-                              onTap: () {
-                                setState(() {
-                                  mode = Mode.Recruiter;
-                                });
-                              },
-                            ),
-                            DropdownMenuItem(
-                              key: ValueKey('placementofficer'),
-                              child: Text('PlacementOfficer'),
-                              value: Mode.PlacementOfficer,
-                              onTap: () {
-                                setState(() {
-                                  mode = Mode.PlacementOfficer;
-                                });
-                              },
-                            )
-                          ]),
+                      if (_islogin == false)
+                        DropdownButton(
+                            key: ValueKey("mode"),
+                            value: mode,
+                            onTap: () {},
+                            onChanged: (val) {
+                              setState(() {
+                                mode = val;
+                              });
+                            },
+                            items: [
+                              DropdownMenuItem<String>(
+                                key: ValueKey('Role'),
+                                value: null,
+                                child: Text('Choose Role'),
+                              ),
+                              DropdownMenuItem(
+                                key: ValueKey('Student'),
+                                value: Mode.Student,
+                                child: Text('Student'),
+                                onTap: () {
+                                  setState(() {
+                                    mode = Mode.Student;
+                                  });
+                                },
+                              ),
+                              DropdownMenuItem(
+                                key: ValueKey('recruiter'),
+                                child: Text('Recruiter'),
+                                value: Mode.Recruiter,
+                                onTap: () {
+                                  setState(() {
+                                    mode = Mode.Recruiter;
+                                  });
+                                },
+                              ),
+                              DropdownMenuItem(
+                                key: ValueKey('placementofficer'),
+                                child: Text('PlacementOfficer'),
+                                value: Mode.PlacementOfficer,
+                                onTap: () {
+                                  setState(() {
+                                    mode = Mode.PlacementOfficer;
+                                  });
+                                },
+                              )
+                            ]),
                       if (widget.isloading == true)
                         Center(child: CircularProgressIndicator())
                       else
