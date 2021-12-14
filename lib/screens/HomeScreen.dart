@@ -44,7 +44,9 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  FirebaseAuth.instance.signOut();
+                  FirebaseAuth.instance.signOut().then((value) {
+                    Navigator.of(context).pop();
+                  });
                 },
                 icon: Icon(Icons.logout))
           ],

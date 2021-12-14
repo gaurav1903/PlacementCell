@@ -19,7 +19,7 @@ class _AuthFormState extends State<AuthForm> {
   String _username = '';
   String _userpassword = '';
   var _islogin = true;
-  var mode;
+  var mode = null;
   void _submit() {
     var status = _formkey.currentState;
     // log("status " + status.toString());
@@ -30,6 +30,7 @@ class _AuthFormState extends State<AuthForm> {
     if (isvalid == true) {
       _formkey.currentState?.save();
       log(_useremail + " " + _userpassword);
+      if (mode == null) mode = Mode.Student;
       widget.saveauthform(_useremail, _username, _userpassword, _islogin, mode);
       _formkey.currentState?.reset();
     }
@@ -109,7 +110,6 @@ class _AuthFormState extends State<AuthForm> {
                         DropdownButton(
                             key: ValueKey("mode"),
                             value: mode,
-                            onTap: () {},
                             onChanged: (val) {
                               setState(() {
                                 mode = val;

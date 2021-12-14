@@ -31,13 +31,6 @@ class MyApp extends StatelessWidget {
           'authscreen': (context) => AuthScreen(),
           'inputform': (context) => InputForm()
         },
-        home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (ctx, snap) {
-              if (snap.hasData)
-                return SplashScreen('homepage');
-              else
-                return SplashScreen('authscreen');
-            }));
+        home: SplashScreen());
   }
 }

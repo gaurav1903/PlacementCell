@@ -9,7 +9,11 @@ class DashBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('dashboard').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('dashboard')
+            .orderBy('time', descending: true)
+            .limit(20)
+            .snapshots(),
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
