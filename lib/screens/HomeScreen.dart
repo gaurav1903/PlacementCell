@@ -4,6 +4,7 @@ import 'package:placement_cell/screens/DashBoard.dart';
 import 'package:placement_cell/screens/IntroPage.dart';
 import '../screens/ProfilePage.dart';
 import '../screens/SearchPage.dart';
+import 'dart:developer';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,13 +14,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int value = 1;
+  int value = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
             onTap: (val) {
+              // log(val.toString());
               setState(() {
                 value = val;
               });
@@ -47,11 +49,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.logout))
           ],
         ),
-        body: value == 1
+        body: value == 0
             ? IntroPage()
-            : value == 2
+            : value == 1
                 ? DashBoard()
-                : value == 3
+                : value == 2
                     ? SearchPage()
                     : ProfilePage());
   }
