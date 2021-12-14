@@ -8,7 +8,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var t = Timer(Duration(seconds: 2), () {
-      Navigator.of(context).pushNamed(s);
+      Navigator.of(context).popAndPushNamed(s);
     });
     return Container(
       color: Theme.of(context).canvasColor,
