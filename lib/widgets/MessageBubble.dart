@@ -31,7 +31,7 @@ class MessageBubble extends StatelessWidget {
         GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-              return CompleteImage(url);
+              return CompleteImage(url, 'network');
             }));
           },
           child: Container(
@@ -43,7 +43,9 @@ class MessageBubble extends StatelessWidget {
                   width: 300,
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.all(10),
-                  child: Image.network(url))),
+                  child: FadeInImage(
+                      placeholder: AssetImage('assets/loading.jpg'),
+                      image: NetworkImage(url)))),
         ),
         SizedBox(height: 10)
       ],
