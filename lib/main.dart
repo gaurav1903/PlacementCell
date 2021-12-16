@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:placement_cell/screens/AuthScreen.dart';
 import 'package:placement_cell/screens/HomeScreen.dart';
+import 'package:placement_cell/screens/SingleUser.dart';
 import 'package:placement_cell/screens/SplashScreen.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
         routes: {
           'homepage': (context) => HomePage(),
           'authscreen': (context) => AuthScreen(),
-          'inputform': (context) => InputForm()
+          'inputform': (context) => InputForm(),
+          'singleuser': (context) => SingleUser()
         },
         home: SplashScreen());
   }
