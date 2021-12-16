@@ -24,7 +24,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _submit() {
     var status = k.currentState;
-    FocusScope.of(context).unfocus();
+    // FocusScope.of(context).unfocus();
     // log("status " + status.toString());
     final isvalid = status?.validate();
     if (isvalid == true && status != null) status.save();
@@ -63,6 +63,9 @@ class _SearchPageState extends State<SearchPage> {
                       value: s,
                       onChanged: (s1) {
                         s = s1.toString();
+                        setState(() {
+                          data = l;
+                        });
                       },
                       items: [
                         DropdownMenuItem(
@@ -130,28 +133,27 @@ class _SearchPageState extends State<SearchPage> {
                         key: k,
                         child: s == "Name"
                             ? TextFormField(
+                                // autofocus: true,
                                 decoration:
                                     InputDecoration(helperText: 'Enter Name'),
                                 onSaved: (val) {
+                                  log("name runn" + val.toString());
                                   if (val != null) field = val;
                                   setState(() {
                                     data = l.where((element) {
                                       if ((element['username'] as String)
-                                          .startsWith(field))
+                                          .toLowerCase()
+                                          .startsWith(field.toLowerCase()))
                                         return true;
                                       else
                                         return false;
                                     }).toList();
+                                    log(data.length.toString());
                                   });
-                                },
-                                validator: (val) {
-                                  if (val == null || val.isEmpty)
-                                    return "enter name";
-                                  else
-                                    return null;
                                 },
                               )
                             : TextFormField(
+                                // autofocus: true,
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 decoration: InputDecoration(
