@@ -44,3 +44,12 @@ class User {
     });
   }
 }
+
+String stringrole(String mode) {
+  if (mode == Mode.PlacementOfficer)
+    return "Placement Officer";
+  else if (mode == Mode.Student)
+    return "Student";
+  else
+    return "Recruiter";
+}

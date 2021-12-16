@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
-import '../widgets/full_userdata.dart' as userdata;
+import '../widgets/full_userdata.dart' as Userdata;
+import 'package:placement_cell/userdata.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -39,9 +40,9 @@ class _SearchPageState extends State<SearchPage> {
             return Center(child: CircularProgressIndicator());
           var x = snap.data as QuerySnapshot<Map<String, dynamic>>;
           List l = x.docs.toList();
-          log("userdata" + userdata.l.toString());
-          if (userdata.l.isEmpty) {
-            userdata.setl(l);
+          // log("userdata" + userdata.l.toString());
+          if (Userdata.l.isEmpty) {
+            Userdata.setl(l);
             data = l;
           }
           log("data" + data.toString());
@@ -215,6 +216,12 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.of(context).pushNamed('singleuser');
                             },
                             child: ListTile(
+                              trailing: Card(
+                                  child: Text(
+                                data[index]['role'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              )),
                               tileColor: Colors.grey.shade300,
                               leading: CircleAvatar(
                                 child: (data[index]['url'] as String).isEmpty
