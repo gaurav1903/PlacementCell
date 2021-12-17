@@ -65,6 +65,7 @@ flutter:
     - assets/jmi.png
     - assets/jmi-front.jpg
     - assets/loading.jpg
+    - assets/selectImage.jpg
   # To add assets to your application, add an assets section, like this:
 
 

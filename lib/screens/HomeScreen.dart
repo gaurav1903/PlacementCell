@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                         ? DashBoard()
                         : value == 2
                             ? SearchPage()
-                            : ProfilePage());
+                            : ProfilePage(""));
           else
             return Center(child: CircularProgressIndicator());
         });
