@@ -217,11 +217,13 @@ class _SearchPageState extends State<SearchPage> {
                             },
                             child: ListTile(
                               trailing: Card(
+                                  color: Colors.grey.shade300,
                                   child: Text(
-                                data[index]['role'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              )),
+                                    data[index]['role'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  )),
                               tileColor: Colors.grey.shade300,
                               leading: CircleAvatar(
                                 child: (data[index]['url'] as String).isEmpty

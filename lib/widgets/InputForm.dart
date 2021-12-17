@@ -19,21 +19,30 @@ class _InputFormState extends State<InputForm> {
     k.currentState?.save();
     FocusScope.of(context).unfocus();
     log("starting to submit");
-    final ref = FirebaseStorage.instance
-        .ref('Dashboard')
-        .child(Timestamp.now().toString() + '.jpg');
-    log("checkpoint 1");
-    await ref.putFile(File((PickedImage as XFile).path)).then((p) async {
-      log("checkpoint 2");
-      String url = await ref.getDownloadURL();
-      log(url.toString());
+    if (PickedImage != null) {
+      final ref = FirebaseStorage.instance
+          .ref('Dashboard')
+          .child(Timestamp.now().toString() + '.jpg');
+      log("checkpoint 1");
+      await ref.putFile(File((PickedImage as XFile).path)).then((p) async {
+        log("checkpoint 2");
+        String url = await ref.getDownloadURL();
+        log(url.toString());
+        FirebaseFirestore.instance.collection('dashboard').add({
+          'user': User().uid,
+          'url': url,
+          'text': text,
+          'username': User().getname()
+        });
+      });
+    } else {
       FirebaseFirestore.instance.collection('dashboard').add({
         'user': User().uid,
-        'url': url,
+        'url': '',
         'text': text,
         'username': User().getname()
       });
-    });
+    }
     setState(() {
       isloading = false;
     });
