@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
         future: datafetching,
         builder: (context, snap) {
           // skills = allskills;
-          // log(skills.toString());
+          log(skills.toString());
           // log(allskills.toString());
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
@@ -113,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 value: skill1,
                                 onChanged: (val) {
                                   setState(() {
-                                    skill1 = val.toString();
+                                    skill1 = val.toString().toLowerCase();
                                   });
                                 },
                                 items: [
@@ -123,8 +123,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                       )
                                     ] +
                                     skills.where((element) {
-                                      return element.toString().toLowerCase() !=
-                                          skill2;
+                                      var z = element.toString().toLowerCase();
+                                      return (z != skill2 &&
+                                          z != skill3 &&
+                                          z != skill4 &&
+                                          z != skill5);
                                     }).map((e) {
                                       return DropdownMenuItem(
                                         child: Text(e.toString().toLowerCase()),
@@ -146,71 +149,95 @@ class _ProfilePageState extends State<ProfilePage> {
                                       )
                                     ] +
                                     skills.where((element) {
-                                      return element.toString().toLowerCase() !=
-                                          skill1;
+                                      var z = element.toString().toLowerCase();
+                                      return (z != skill1 &&
+                                          z != skill3 &&
+                                          z != skill4 &&
+                                          z != skill5);
                                     }).map((e) {
                                       return DropdownMenuItem(
                                         child: Text(e.toString().toLowerCase()),
                                         value: e.toString().toLowerCase(),
                                       );
                                     }).toList()),
-                            // DropdownButton(
-                            //     value: skill1,
-                            //     onChanged: (val) {
-                            //       setState(() {
-                            //         skill1 = val.toString();
-                            //       });
-                            //     },
-                            //     items: [
-                            //           DropdownMenuItem(
-                            //             child: Text("Choose 1st skill"),
-                            //             value: "Choose 1st skill",
-                            //           )
-                            //         ] +
-                            //         skills.map((e) {
-                            //           return DropdownMenuItem(
-                            //             child: Text(e.toString().toLowerCase()),
-                            //             value: e.toString(),
-                            //           );
-                            //         }).toList()),
-                            // DropdownButton(
-                            //     value: skill1,
-                            //     onChanged: (val) {
-                            //       setState(() {
-                            //         skill1 = val.toString();
-                            //       });
-                            //     },
-                            //     items: [
-                            //           DropdownMenuItem(
-                            //             child: Text("Choose 1st skill"),
-                            //             value: "Choose 1st skill",
-                            //           )
-                            //         ] +
-                            //         skills.map((e) {
-                            //           return DropdownMenuItem(
-                            //             child: Text(e.toString().toLowerCase()),
-                            //             value: e.toString(),
-                            //           );
-                            //         }).toList()),
-                            // DropdownButton(
-                            //     value: skill1,
-                            //     onChanged: (val) {
-                            //       setState(() {
-                            //         skill1 = val.toString();
-                            //       });
-                            //     },
-                            //     items: [
-                            //           DropdownMenuItem(
-                            //             child: Text("Choose 1st skill"),
-                            //             value: "Choose 1st skill",
-                            //           )
-                            //         ] +
-                            //         skills.map((e) {
-                            //           return DropdownMenuItem(
-                            //             child: Text(e.toString().toLowerCase()),
-                            //             value: e.toString(),
-                            //           );
-                            //         }).toList()),
+                            DropdownButton(
+                                key: ValueKey("skill 3"),
+                                value: skill3,
+                                onChanged: (val) {
+                                  setState(() {
+                                    skill3 = val.toString().toLowerCase();
+                                  });
+                                },
+                                items: [
+                                      DropdownMenuItem(
+                                        child: Text("Choose 3rd skill"),
+                                        value: "Choose 3rd skill",
+                                      )
+                                    ] +
+                                    skills.where((element) {
+                                      var z = element.toString().toLowerCase();
+                                      return (z != skill1 &&
+                                          z != skill2 &&
+                                          z != skill4 &&
+                                          z != skill5);
+                                    }).map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.toString().toLowerCase()),
+                                        value: e.toString().toLowerCase(),
+                                      );
+                                    }).toList()),
+                            DropdownButton(
+                                key: ValueKey("skill 4"),
+                                value: skill4,
+                                onChanged: (val) {
+                                  setState(() {
+                                    skill4 = val.toString().toLowerCase();
+                                  });
+                                },
+                                items: [
+                                      DropdownMenuItem(
+                                        child: Text("Choose 4th skill"),
+                                        value: "Choose 4th skill",
+                                      )
+                                    ] +
+                                    skills.where((element) {
+                                      var z = element.toString().toLowerCase();
+                                      return (z != skill1 &&
+                                          z != skill2 &&
+                                          z != skill3 &&
+                                          z != skill5);
+                                    }).map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.toString().toLowerCase()),
+                                        value: e.toString().toLowerCase(),
+                                      );
+                                    }).toList()),
+                            DropdownButton(
+                                key: ValueKey("skill 5"),
+                                value: skill5,
+                                onChanged: (val) {
+                                  setState(() {
+                                    skill5 = val.toString().toLowerCase();
+                                  });
+                                },
+                                items: [
+                                      DropdownMenuItem(
+                                        child: Text("Choose 5th skill"),
+                                        value: "Choose 5th skill",
+                                      )
+                                    ] +
+                                    skills.where((element) {
+                                      var z = element.toString().toLowerCase();
+                                      return (z != skill1 &&
+                                          z != skill2 &&
+                                          z != skill3 &&
+                                          z != skill4);
+                                    }).map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.toString().toLowerCase()),
+                                        value: e.toString().toLowerCase(),
+                                      );
+                                    }).toList()),
                           ],
                         )
                       ]),
@@ -222,6 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
+//TODO::CORRECT CONDITIONS
 class Field extends StatelessWidget {
   String s;
   TextInputType t;
