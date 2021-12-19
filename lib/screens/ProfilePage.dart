@@ -1,4 +1,4 @@
-import 'dart:math';
+// import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,11 @@ class _ProfilePageState extends State<ProfilePage> {
   final k = GlobalKey<FormState>();
   List skills = [];
   List domain = [];
-  var skillval, domainval;
+  var skill1 = "Choose 1st skill", domainval;
+  var skill2 = "Choose 2nd skill",
+      skill3 = "Choose 3rd skill",
+      skill4 = "Choose 4th skill",
+      skill5 = "Choose 5th skill";
   Future<void> getting_data() async {
     await FirebaseFirestore.instance
         .collection('skills')
@@ -26,7 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
         .get()
         .then((value) {
       skills = value.data()?['skills'].toList();
-      skillval = skills[0];
     });
     await FirebaseFirestore.instance
         .collection('domain')
@@ -51,76 +54,170 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder(
         future: datafetching,
         builder: (context, snap) {
+          // skills = allskills;
+          // log(skills.toString());
+          // log(allskills.toString());
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
-          return Container(
-              color: Colors.blue.shade50,
-              child: Column(
-                children: [
-                  Container(
-                    height: 250,
-                    width: MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      child: PickedImage == null
-                          ? Image.asset('assets/selectImage.jpg',
-                              fit: BoxFit.fitWidth)
-                          : Image.file(File((PickedImage as XFile).path),
-                              width: MediaQuery.of(context).size.width,
-                              fit: BoxFit.fitWidth),
-                      onTap: () {
-                        ImagePicker.platform
-                            .getImage(source: ImageSource.gallery)
-                            .then((value) {
-                          setState(() {
-                            PickedImage = value;
+          return SingleChildScrollView(
+            child: Container(
+                color: Colors.blue.shade50,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 250,
+                      width: MediaQuery.of(context).size.width,
+                      child: GestureDetector(
+                        child: PickedImage == null
+                            ? Image.asset('assets/selectImage.jpg',
+                                fit: BoxFit.fitWidth)
+                            : Image.file(File((PickedImage as XFile).path),
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.fitWidth),
+                        onTap: () {
+                          ImagePicker.platform
+                              .getImage(source: ImageSource.gallery)
+                              .then((value) {
+                            setState(() {
+                              PickedImage = value;
+                            });
                           });
-                        });
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Form(
-                    key: k,
-                    child: Column(children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Field("Batch year", TextInputType.number),
-                          SizedBox(width: 50),
-                          Field("CGPA",
-                              TextInputType.numberWithOptions(decimal: true))
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          DropdownButton(
-                            value: skillval,
-                            onChanged: (val) {
-                              setState(() {
-                                skillval = val;
-                              });
-                            },
-                            items: skills.map((e) {
-                              return DropdownMenuItem(
-                                child: Text(e.toString()),
-                                value: e.toString(),
-                              );
-                            }).toList(),
-                          ),
-                          DropdownButton(
-                            items: [],
-                            onChanged: null,
-                          )
-                        ],
-                      )
-                    ]),
-                  ),
-                ],
-              ));
+                    SizedBox(height: 20),
+                    Form(
+                      key: k,
+                      child: Column(children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Field("Batch year", TextInputType.number),
+                            SizedBox(width: 50),
+                            Field("CGPA",
+                                TextInputType.numberWithOptions(decimal: true))
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Choose 5 Skills"),
+                            SizedBox(height: 10),
+                            DropdownButton(
+                                key: ValueKey("1st skill"),
+                                value: skill1,
+                                onChanged: (val) {
+                                  setState(() {
+                                    skill1 = val.toString();
+                                  });
+                                },
+                                items: [
+                                      DropdownMenuItem(
+                                        child: Text("Choose 1st skill"),
+                                        value: "Choose 1st skill",
+                                      )
+                                    ] +
+                                    skills.where((element) {
+                                      return element.toString().toLowerCase() !=
+                                          skill2;
+                                    }).map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.toString().toLowerCase()),
+                                        value: e.toString().toLowerCase(),
+                                      );
+                                    }).toList()),
+                            DropdownButton(
+                                key: ValueKey("skill 2"),
+                                value: skill2,
+                                onChanged: (val) {
+                                  setState(() {
+                                    skill2 = val.toString().toLowerCase();
+                                  });
+                                },
+                                items: [
+                                      DropdownMenuItem(
+                                        child: Text("Choose 2nd skill"),
+                                        value: "Choose 2nd skill",
+                                      )
+                                    ] +
+                                    skills.where((element) {
+                                      return element.toString().toLowerCase() !=
+                                          skill1;
+                                    }).map((e) {
+                                      return DropdownMenuItem(
+                                        child: Text(e.toString().toLowerCase()),
+                                        value: e.toString().toLowerCase(),
+                                      );
+                                    }).toList()),
+                            // DropdownButton(
+                            //     value: skill1,
+                            //     onChanged: (val) {
+                            //       setState(() {
+                            //         skill1 = val.toString();
+                            //       });
+                            //     },
+                            //     items: [
+                            //           DropdownMenuItem(
+                            //             child: Text("Choose 1st skill"),
+                            //             value: "Choose 1st skill",
+                            //           )
+                            //         ] +
+                            //         skills.map((e) {
+                            //           return DropdownMenuItem(
+                            //             child: Text(e.toString().toLowerCase()),
+                            //             value: e.toString(),
+                            //           );
+                            //         }).toList()),
+                            // DropdownButton(
+                            //     value: skill1,
+                            //     onChanged: (val) {
+                            //       setState(() {
+                            //         skill1 = val.toString();
+                            //       });
+                            //     },
+                            //     items: [
+                            //           DropdownMenuItem(
+                            //             child: Text("Choose 1st skill"),
+                            //             value: "Choose 1st skill",
+                            //           )
+                            //         ] +
+                            //         skills.map((e) {
+                            //           return DropdownMenuItem(
+                            //             child: Text(e.toString().toLowerCase()),
+                            //             value: e.toString(),
+                            //           );
+                            //         }).toList()),
+                            // DropdownButton(
+                            //     value: skill1,
+                            //     onChanged: (val) {
+                            //       setState(() {
+                            //         skill1 = val.toString();
+                            //       });
+                            //     },
+                            //     items: [
+                            //           DropdownMenuItem(
+                            //             child: Text("Choose 1st skill"),
+                            //             value: "Choose 1st skill",
+                            //           )
+                            //         ] +
+                            //         skills.map((e) {
+                            //           return DropdownMenuItem(
+                            //             child: Text(e.toString().toLowerCase()),
+                            //             value: e.toString(),
+                            //           );
+                            //         }).toList()),
+                          ],
+                        )
+                      ]),
+                    ),
+                  ],
+                )),
+          );
         });
   }
 }
