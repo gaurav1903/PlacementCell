@@ -249,7 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-//TODO::CORRECT CONDITIONS
+//TODO::ADD SUBMIT BUTTON AND RESUME AND DOMAIN AND ADD SEARCH FUNCTIONALITY
 class Field extends StatelessWidget {
   String s;
   TextInputType t;
