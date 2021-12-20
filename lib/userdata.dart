@@ -10,7 +10,7 @@ class User {
   final z = FirebaseAuth.instance.currentUser;
   static final userid = FirebaseAuth.instance.currentUser?.uid;
   static var complete;
-  static var name = "", username, batch, mode;
+  static var name = "", username, batch, mode, domain;
   bool get completeness {
     return complete;
   }
@@ -35,6 +35,7 @@ class User {
       username = completedata != null ? completedata['username'] : '';
       batch = completedata != null ? completedata['batch'] : '';
       var temp = completedata != null ? completedata['mode'] : Mode.Student;
+      domain = completedata != null ? completedata['domain'] : "";
       if (temp == 'Student')
         mode = Mode.Student;
       else if (temp == 'Recruiter')

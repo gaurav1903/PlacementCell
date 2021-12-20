@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import '../widgets/full_userdata.dart' as Userdata;
@@ -14,6 +15,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   var s = "Name";
   String field = "";
+  var domainval = "Enter Domain";
   double cgpa = 0;
   bool val = false;
   List data = Userdata.partialdata();
@@ -23,6 +25,7 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
   }
 
+  List domains = [], skills = [];
   void _submit() {
     var status = k.currentState;
     // FocusScope.of(context).unfocus();
@@ -32,6 +35,20 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future getdata() async {
+    await FirebaseFirestore.instance
+        .collection('domain')
+        .doc('h16ILMhCBNG96ItFqhzT')
+        .get()
+        .then((value) {
+      domains = value.data()?['domain'].toList();
+    });
+    await FirebaseFirestore.instance
+        .collection('skills')
+        .doc('l1G4TFS9carHqG25KrfJ')
+        .get()
+        .then((value) {
+      skills = value.data()?['skills'].toList();
+    });
     return await FirebaseFirestore.instance.collection('users').get();
   }
 
@@ -204,9 +221,33 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     OutlinedButton(onPressed: _submit, child: Text('submit'))
                   ]),
-                //TODO::
-                // if (s == "Domain")
-                //   DropdownButton(items: [])
+
+                if (s == "Domain")
+                  DropdownButton(
+                    value: domainval,
+                    items: [
+                          DropdownMenuItem(
+                              child: Text("Enter Domain"),
+                              value: "Enter Domain")
+                        ] +
+                        domains.map((e) {
+                          return DropdownMenuItem(
+                              child: Text(e.toString()), value: e.toString());
+                        }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        domainval = val.toString();
+                        //TODO::CHANGE DATA AND USERDATA'S PARTIAL
+                        data = l.where((element) {
+                          if (element['domain'] == domainval) {
+                            return true;
+                          } else
+                            return false;
+                        }).toList();
+                        Userdata.setpartialdata(data);
+                      });
+                    },
+                  ),
                 // else
                 //   DropdownButton(items: []),
                 Divider(),

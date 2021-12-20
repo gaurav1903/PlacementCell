@@ -18,3 +18,7 @@ void setpartialdata(List x) {
 List partialdata() {
   return partial;
 }
+
+List skills = [];
+List domains = [];
+//TODO::STORE SKILLS AND DOMAIN HERE AND STOP FETCHING AGAIN AND AGAIN
