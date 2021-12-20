@@ -36,3 +36,5 @@ class MyApp extends StatelessWidget {
         home: SplashScreen());
   }
 }
+
+//TODO:: ADD MESSAGES AND SETTINGS TAB,,

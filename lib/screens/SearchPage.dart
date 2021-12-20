@@ -16,7 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   String field = "";
   double cgpa = 0;
   bool val = false;
-  List data = [];
+  List data = Userdata.partialdata();
   final k = GlobalKey<FormState>();
   @override
   void initState() {
@@ -31,23 +31,26 @@ class _SearchPageState extends State<SearchPage> {
     if (isvalid == true && status != null) status.save();
   }
 
+  Future getdata() async {
+    return await FirebaseFirestore.instance.collection('users').get();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: FirebaseFirestore.instance.collection('users').get(),
+        future: getdata(),
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           var x = snap.data as QuerySnapshot<Map<String, dynamic>>;
           List l = x.docs.toList();
-          // log("userdata" + userdata.l.toString());
+          log("userdata" + Userdata.l.toString());
           if (Userdata.l.isEmpty) {
             Userdata.setl(l);
             data = l;
+            Userdata.setpartialdata(l);
           }
           log("data" + data.toString());
-          // log(l[0]['username']);
-          // log(data.toString());
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -149,6 +152,7 @@ class _SearchPageState extends State<SearchPage> {
                                       else
                                         return false;
                                     }).toList();
+                                    Userdata.setpartialdata(data);
                                     log(data.length.toString());
                                   });
                                 },
@@ -188,6 +192,7 @@ class _SearchPageState extends State<SearchPage> {
                                       } else
                                         return false;
                                     }).toList();
+                                    Userdata.setpartialdata(data);
                                     log(data.length.toString());
                                   });
                                 },
@@ -226,9 +231,14 @@ class _SearchPageState extends State<SearchPage> {
                                   )),
                               tileColor: Colors.grey.shade300,
                               leading: CircleAvatar(
-                                child: (data[index]['url'] as String).isEmpty
+                                child: (data[index]['imageurl'] as String)
+                                        .isEmpty
                                     ? Icon(Icons.person)
-                                    : Image.network(data[index]['url']),
+                                    : ClipRRect(
+                                        child: Image.network(
+                                            data[index]['imageurl']),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                               ),
                               title: Text(data[index]['username']
                                   .toString()
@@ -250,3 +260,6 @@ class _SearchPageState extends State<SearchPage> {
         });
   }
 }
+//TODO::IMAGEURL MAKE A MANDATORY FIELD OR FIX IT HERE
+//TODO:: FIX CIRCULAR AVATAR IMAGE
+//TODO:: ADD  REMAINING SEARCH FILTERS

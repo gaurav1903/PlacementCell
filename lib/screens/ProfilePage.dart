@@ -1,5 +1,5 @@
 // import 'dart:math' as math;
-
+//TODO:: VALIDATION AND ERROR HANDLING IN INPUT
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -55,8 +55,8 @@ class _ProfilePageState extends State<ProfilePage> {
       "imageurl": imageurl,
       "resumeurl": resumeurl,
       "domain": domainval,
-      "CGPA": cgpa,
-      "batch": batchans,
+      "CGPA": double.parse(cgpa),
+      "batch": int.parse(batchans),
     });
     setState(() {
       isloading = false;
