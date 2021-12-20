@@ -47,6 +47,12 @@ class _ProfilePageState extends State<ProfilePage> {
       imageurl = await ref1.getDownloadURL();
     });
     var path = (resume as FilePickerResult).paths[0];
+    List l = [];
+    if (!skill1.startsWith("Choose")) l.add(skill1);
+    if (!skill2.startsWith("Choose")) l.add(skill2);
+    if (!skill3.startsWith("Choose")) l.add(skill3);
+    if (!skill4.startsWith("Choose")) l.add(skill4);
+    if (!skill5.startsWith("Choose")) l.add(skill5);
     if (path != null)
       await ref2.putFile(File(path)).then((resumeresult) async {
         resumeurl = await ref2.getDownloadURL();
@@ -57,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
       "domain": domainval,
       "CGPA": double.parse(cgpa),
       "batch": int.parse(batchans),
+      "skills": l
     });
     setState(() {
       isloading = false;
@@ -391,5 +398,4 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-//TODO:: more skills and pdf viewer
-//TODO::ADD SUBMIT BUTTON AND RESUME AND DOMAIN AND ADD SEARCH FUNCTIONALITY
+//TODO:: more skills and ADD SEARCH FUNCTIONALITY
