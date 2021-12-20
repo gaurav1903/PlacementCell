@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   String url;
@@ -15,10 +16,11 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var PickedImage;
+  var resume;
   final k = GlobalKey<FormState>();
   List skills = [];
   List domain = [];
-  var skill1 = "Choose 1st skill", domainval;
+  var skill1 = "Choose 1st skill", domainval = "Choose Domain";
   var skill2 = "Choose 2nd skill",
       skill3 = "Choose 3rd skill",
       skill4 = "Choose 4th skill",
@@ -37,7 +39,6 @@ class _ProfilePageState extends State<ProfilePage> {
         .get()
         .then((value) {
       domain = value.data()?['domain'].toList();
-      domainval = domain[0];
     });
     return;
   }
@@ -55,10 +56,11 @@ class _ProfilePageState extends State<ProfilePage> {
         future: datafetching,
         builder: (context, snap) {
           // skills = allskills;
-          log(skills.toString());
+          // log(skills.toString());
+          log(domain.toString());
           // log(allskills.toString());
           if (snap.connectionState == ConnectionState.waiting)
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           return SingleChildScrollView(
             child: Container(
                 color: Colors.blue.shade50,
@@ -85,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Form(
                       key: k,
                       child: Column(children: [
@@ -94,152 +96,199 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Field("Batch year", TextInputType.number),
-                            SizedBox(width: 50),
-                            Field("CGPA",
-                                TextInputType.numberWithOptions(decimal: true))
+                            const SizedBox(width: 50),
+                            Field(
+                                "CGPA",
+                                const TextInputType.numberWithOptions(
+                                    decimal: true))
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        const Text(
+                          "Choose 5 Skills",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        DropdownButton(
+                            key: const ValueKey("1st skill"),
+                            value: skill1,
+                            onChanged: (val) {
+                              setState(() {
+                                skill1 = val.toString().toLowerCase();
+                              });
+                            },
+                            items: [
+                                  const DropdownMenuItem(
+                                    child: Text("Choose 1st skill"),
+                                    value: "Choose 1st skill",
+                                  )
+                                ] +
+                                skills.where((element) {
+                                  var z = element.toString().toLowerCase();
+                                  return (z != skill2 &&
+                                      z != skill3 &&
+                                      z != skill4 &&
+                                      z != skill5);
+                                }).map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.toString().toLowerCase()),
+                                    value: e.toString().toLowerCase(),
+                                  );
+                                }).toList()),
+                        DropdownButton(
+                            key: const ValueKey("skill 2"),
+                            value: skill2,
+                            onChanged: (val) {
+                              setState(() {
+                                skill2 = val.toString().toLowerCase();
+                              });
+                            },
+                            items: [
+                                  const DropdownMenuItem(
+                                    child: Text("Choose 2nd skill"),
+                                    value: "Choose 2nd skill",
+                                  )
+                                ] +
+                                skills.where((element) {
+                                  var z = element.toString().toLowerCase();
+                                  return (z != skill1 &&
+                                      z != skill3 &&
+                                      z != skill4 &&
+                                      z != skill5);
+                                }).map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.toString().toLowerCase()),
+                                    value: e.toString().toLowerCase(),
+                                  );
+                                }).toList()),
+                        DropdownButton(
+                            key: const ValueKey("skill 3"),
+                            value: skill3,
+                            onChanged: (val) {
+                              setState(() {
+                                skill3 = val.toString().toLowerCase();
+                              });
+                            },
+                            items: [
+                                  DropdownMenuItem(
+                                    child: Text("Choose 3rd skill"),
+                                    value: "Choose 3rd skill",
+                                  )
+                                ] +
+                                skills.where((element) {
+                                  var z = element.toString().toLowerCase();
+                                  return (z != skill1 &&
+                                      z != skill2 &&
+                                      z != skill4 &&
+                                      z != skill5);
+                                }).map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.toString().toLowerCase()),
+                                    value: e.toString().toLowerCase(),
+                                  );
+                                }).toList()),
+                        DropdownButton(
+                            key: ValueKey("skill 4"),
+                            value: skill4,
+                            onChanged: (val) {
+                              setState(() {
+                                skill4 = val.toString().toLowerCase();
+                              });
+                            },
+                            items: [
+                                  DropdownMenuItem(
+                                    child: Text("Choose 4th skill"),
+                                    value: "Choose 4th skill",
+                                  )
+                                ] +
+                                skills.where((element) {
+                                  var z = element.toString().toLowerCase();
+                                  return (z != skill1 &&
+                                      z != skill2 &&
+                                      z != skill3 &&
+                                      z != skill5);
+                                }).map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.toString().toLowerCase()),
+                                    value: e.toString().toLowerCase(),
+                                  );
+                                }).toList()),
+                        DropdownButton(
+                            key: ValueKey("skill 5"),
+                            value: skill5,
+                            onChanged: (val) {
+                              setState(() {
+                                skill5 = val.toString().toLowerCase();
+                              });
+                            },
+                            items: [
+                                  DropdownMenuItem(
+                                    child: Text("Choose 5th skill"),
+                                    value: "Choose 5th skill",
+                                  )
+                                ] +
+                                skills.where((element) {
+                                  var z = element.toString().toLowerCase();
+                                  return (z != skill1 &&
+                                      z != skill2 &&
+                                      z != skill3 &&
+                                      z != skill4);
+                                }).map((e) {
+                                  return DropdownMenuItem(
+                                    child: Text(e.toString().toLowerCase()),
+                                    value: e.toString().toLowerCase(),
+                                  );
+                                }).toList()),
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Choose 5 Skills"),
-                            SizedBox(height: 10),
                             DropdownButton(
-                                key: ValueKey("1st skill"),
-                                value: skill1,
+                                value: domainval,
                                 onChanged: (val) {
                                   setState(() {
-                                    skill1 = val.toString().toLowerCase();
+                                    domainval = val.toString();
                                   });
                                 },
                                 items: [
                                       DropdownMenuItem(
-                                        child: Text("Choose 1st skill"),
-                                        value: "Choose 1st skill",
-                                      )
+                                          child: Text("Choose Domain"),
+                                          value: "Choose Domain")
                                     ] +
-                                    skills.where((element) {
-                                      var z = element.toString().toLowerCase();
-                                      return (z != skill2 &&
-                                          z != skill3 &&
-                                          z != skill4 &&
-                                          z != skill5);
-                                    }).map((e) {
+                                    domain.map((e) {
                                       return DropdownMenuItem(
-                                        child: Text(e.toString().toLowerCase()),
-                                        value: e.toString().toLowerCase(),
+                                        child: Text(e.toString()),
+                                        value: e.toString(),
                                       );
                                     }).toList()),
-                            DropdownButton(
-                                key: ValueKey("skill 2"),
-                                value: skill2,
-                                onChanged: (val) {
-                                  setState(() {
-                                    skill2 = val.toString().toLowerCase();
+                            SizedBox(width: 60),
+                            OutlinedButton(
+                                onPressed: () {
+                                  FilePicker.platform.pickFiles(
+                                      dialogTitle: "Choose Resume pdf",
+                                      allowCompression: true,
+                                      type: FileType.custom,
+                                      allowedExtensions: ["pdf"]).then((value) {
+                                    if (value != null)
+                                      setState(() {
+                                        resume = value;
+                                      });
                                   });
                                 },
-                                items: [
-                                      DropdownMenuItem(
-                                        child: Text("Choose 2nd skill"),
-                                        value: "Choose 2nd skill",
-                                      )
-                                    ] +
-                                    skills.where((element) {
-                                      var z = element.toString().toLowerCase();
-                                      return (z != skill1 &&
-                                          z != skill3 &&
-                                          z != skill4 &&
-                                          z != skill5);
-                                    }).map((e) {
-                                      return DropdownMenuItem(
-                                        child: Text(e.toString().toLowerCase()),
-                                        value: e.toString().toLowerCase(),
-                                      );
-                                    }).toList()),
-                            DropdownButton(
-                                key: ValueKey("skill 3"),
-                                value: skill3,
-                                onChanged: (val) {
-                                  setState(() {
-                                    skill3 = val.toString().toLowerCase();
-                                  });
-                                },
-                                items: [
-                                      DropdownMenuItem(
-                                        child: Text("Choose 3rd skill"),
-                                        value: "Choose 3rd skill",
-                                      )
-                                    ] +
-                                    skills.where((element) {
-                                      var z = element.toString().toLowerCase();
-                                      return (z != skill1 &&
-                                          z != skill2 &&
-                                          z != skill4 &&
-                                          z != skill5);
-                                    }).map((e) {
-                                      return DropdownMenuItem(
-                                        child: Text(e.toString().toLowerCase()),
-                                        value: e.toString().toLowerCase(),
-                                      );
-                                    }).toList()),
-                            DropdownButton(
-                                key: ValueKey("skill 4"),
-                                value: skill4,
-                                onChanged: (val) {
-                                  setState(() {
-                                    skill4 = val.toString().toLowerCase();
-                                  });
-                                },
-                                items: [
-                                      DropdownMenuItem(
-                                        child: Text("Choose 4th skill"),
-                                        value: "Choose 4th skill",
-                                      )
-                                    ] +
-                                    skills.where((element) {
-                                      var z = element.toString().toLowerCase();
-                                      return (z != skill1 &&
-                                          z != skill2 &&
-                                          z != skill3 &&
-                                          z != skill5);
-                                    }).map((e) {
-                                      return DropdownMenuItem(
-                                        child: Text(e.toString().toLowerCase()),
-                                        value: e.toString().toLowerCase(),
-                                      );
-                                    }).toList()),
-                            DropdownButton(
-                                key: ValueKey("skill 5"),
-                                value: skill5,
-                                onChanged: (val) {
-                                  setState(() {
-                                    skill5 = val.toString().toLowerCase();
-                                  });
-                                },
-                                items: [
-                                      DropdownMenuItem(
-                                        child: Text("Choose 5th skill"),
-                                        value: "Choose 5th skill",
-                                      )
-                                    ] +
-                                    skills.where((element) {
-                                      var z = element.toString().toLowerCase();
-                                      return (z != skill1 &&
-                                          z != skill2 &&
-                                          z != skill3 &&
-                                          z != skill4);
-                                    }).map((e) {
-                                      return DropdownMenuItem(
-                                        child: Text(e.toString().toLowerCase()),
-                                        value: e.toString().toLowerCase(),
-                                      );
-                                    }).toList()),
+                                child: resume == null
+                                    ? Text("Add Resume")
+                                    : Text("Change Resume")),
+                            SizedBox(width: 10),
+                            if (resume != null)
+                              Icon(Icons.file_present)
+                            else
+                              Icon(Icons.upload_file_outlined)
                           ],
-                        )
+                        ), //domain and add resume
+                        SizedBox(height: 10),
+                        TextButton(onPressed: null, child: Text("Submit"))
                       ]),
                     ),
                   ],
