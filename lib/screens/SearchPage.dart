@@ -237,7 +237,6 @@ class _SearchPageState extends State<SearchPage> {
                     onChanged: (val) {
                       setState(() {
                         domainval = val.toString();
-                        //TODO::CHANGE DATA AND USERDATA'S PARTIAL
                         data = l.where((element) {
                           if (element['domain'] == domainval) {
                             return true;
@@ -289,14 +288,14 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.of(context).pushNamed('singleuser');
                             },
                             child: ListTile(
-                              trailing: Card(
-                                  color: Colors.grey.shade300,
-                                  child: Text(
-                                    data[index]['role'],
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
-                                  )),
+                              trailing: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        'message_screen',
+                                        arguments:
+                                            data[index]); //TODO::aDD IN ROUTES
+                                  },
+                                  child: Icon(Icons.message)),
                               tileColor: Colors.grey.shade300,
                               leading: CircleAvatar(
                                 child: (data[index]['imageurl'] as String)
@@ -328,6 +327,10 @@ class _SearchPageState extends State<SearchPage> {
         });
   }
 }
-//TODO::IMAGEURL MAKE A MANDATORY FIELD OR FIX IT HERE
-//TODO:: FIX CIRCULAR AVATAR IMAGE
-//TODO:: ADD  REMAINING SEARCH FILTERS
+//TODO::MANDATORY FIELDs
+//TODO:: FIX CIRCULAR AVATAR IMAGE(low priority)
+//TODO::MESSAGES FUNCTIONALITY(high)
+// TODO::NOTIFICATIONS AND SETTINGS
+//TODO::MESSAGE ALL on screen
+//TODO:: ADD RULES FOR DIFFERENT MODES LIKE RECRUITER AND STUDENTS AND PLACEMENT OFFICERS
+//TODO:: RESTRICT TO ONLY STUDENTS IN SEARCH BOX

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../widgets/InputForm.dart';
+import '../screens/Messages.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
           'homepage': (context) => HomePage(),
           'authscreen': (context) => AuthScreen(),
           'inputform': (context) => InputForm(),
-          'singleuser': (context) => SingleUser()
+          'singleuser': (context) => SingleUser(),
+          'message_screen': (context) => Messages(),
         },
         home: SplashScreen());
   }

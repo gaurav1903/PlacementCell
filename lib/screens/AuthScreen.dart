@@ -49,7 +49,12 @@ class _AuthScreenState extends State<AuthScreen> {
         FirebaseFirestore.instance
             .collection('users')
             .doc(auth.currentUser?.uid)
-            .set({'username': username, 'email': email, 'role': m});
+            .set({
+          'username': username,
+          'email': email,
+          'role': m,
+          "uid": auth.currentUser?.uid
+        });
       }
     } on PlatformException catch (err) {
       var mess = "Please check credentials";
