@@ -221,7 +221,6 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     OutlinedButton(onPressed: _submit, child: Text('submit'))
                   ]),
-
                 if (s == "Domain")
                   DropdownButton(
                     value: domainval,
@@ -248,8 +247,7 @@ class _SearchPageState extends State<SearchPage> {
                       });
                     },
                   ),
-                // else
-                //   DropdownButton(items: []),
+                if (s == "Skills") DropdownButton(items: []),
                 Divider(),
                 Expanded(
                   child: ListView.builder(

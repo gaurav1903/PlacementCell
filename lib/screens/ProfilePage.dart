@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return SingleChildScrollView(
                 child: Container(
                     color: Colors.blue.shade50,
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(20),
                     child: Column(
                       children: [
                         Container(
