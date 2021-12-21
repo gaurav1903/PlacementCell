@@ -16,6 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   var s = "Name";
   String field = "";
   var domainval = "Enter Domain";
+  var skillval = "Choose Skill";
   double cgpa = 0;
   bool val = false;
   List data = Userdata.partialdata();
@@ -247,7 +248,35 @@ class _SearchPageState extends State<SearchPage> {
                       });
                     },
                   ),
-                if (s == "Skills") DropdownButton(items: []),
+                if (s == "Skills")
+                  DropdownButton(
+                      value: skillval,
+                      onChanged: (val) {
+                        setState(() {
+                          //TODO::CHANGE STUFF
+                          skillval = val.toString();
+                          data = l.where((element) {
+                            log(element['skills'].toString());
+                            if ((element['skills'] as List)
+                                .contains(skillval)) {
+                              return true;
+                            } else
+                              return false;
+                          }).toList();
+                          log(data.toString() +
+                              " after data on basis of skill");
+                          Userdata.setpartialdata(data);
+                        });
+                      },
+                      items: skills.map((e) {
+                            return DropdownMenuItem(
+                                child: Text(e.toString()), value: e.toString());
+                          }).toList() +
+                          [
+                            DropdownMenuItem(
+                                child: Text("Choose Skill"),
+                                value: "Choose Skill")
+                          ]),
                 Divider(),
                 Expanded(
                   child: ListView.builder(

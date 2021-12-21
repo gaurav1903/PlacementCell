@@ -6,8 +6,7 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
+    return Column(
       children: [
         Image.asset('assets/jmi.png'),
         GestureDetector(
@@ -42,6 +41,6 @@ class IntroPage extends StatelessWidget {
           ]),
         ),
       ],
-    ));
+    );
   }
 }

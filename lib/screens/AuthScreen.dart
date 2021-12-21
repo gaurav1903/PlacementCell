@@ -65,7 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
       });
     } //for invalid username
     catch (e) {
-      print(e);
+      // print(e);
       setState(() {
         isloading = false;
       });
