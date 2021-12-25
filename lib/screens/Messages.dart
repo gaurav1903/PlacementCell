@@ -14,6 +14,7 @@ class _MessagesState extends State<Messages> {
   @override
   Widget build(BuildContext context) {
     user = ModalRoute.of(context)?.settings.arguments;
+    log(user.toString() + " user");
     return Scaffold(
       appBar: AppBar(
         title: Text(user['username']),
