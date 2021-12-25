@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:placement_cell/userdata.dart';
 import 'dart:developer';
+//THIS IS FOR ONE PERSON ONLY SO WE HAVE TO SIMPLY GET FROM SHAREDPREFERENCES AND THEN LOOK AT DOCCHANGES
 
 class Messages extends StatefulWidget {
   @override
@@ -36,17 +37,17 @@ class _MessagesState extends State<Messages> {
       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection("users")
-              .doc(User.userid)
-              .collection(user["uid"])
-              .snapshots()
-              .where((event) {
-            log(event.docs[0].toString() + "event");
-            return true;
-          }),
+              .collection("chats")
+              .doc(User.userid.toString())
+              .collection("userchats")
+              .snapshots(),
           builder: (context, snap) {
             if (snap.connectionState == ConnectionState.waiting)
               return Center(child: CircularProgressIndicator());
+            log(User.userid.toString());
+            var z =
+                (snap.data as QuerySnapshot<Map<String, dynamic>>).docChanges;
+            log(z.toString() + " look here at doc changes");
             return Column(
               children: [
                 // ListView.builder(itemBuilder: (ctx, index) {
@@ -65,6 +66,9 @@ class _MessagesState extends State<Messages> {
 //TODO:: 2ND--->IMAGES MESSAGES AND OPENS
 //TODO:: 3RD --> FILES AND OPENS
 //TODO:: 4TH-> FOLLOW FUNCTIONALITY
+//TODO::HOW TO DO IT?
+//FIRST LOAD CACHE FROM SHAREDPREFERENCES THEN FROM DOCCHANGES
+//DRAFT1 ->>LOAD ALL DOCS SIMPLY AND THEN GET ALL THE CHANGED
 
 class WriteBox extends StatefulWidget {
   var user;

@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_cell/screens/AllMessages.dart';
 import 'package:placement_cell/screens/DashBoard.dart';
 import 'package:placement_cell/screens/IntroPage.dart';
 import '../screens/ProfilePage.dart';
 import '../screens/SearchPage.dart';
 import 'dart:developer';
 import 'package:placement_cell/userdata.dart' as admin;
+import '../widgets/full_userdata.dart' as users;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,11 +19,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int value = 0;
-  final _user = admin.User();
+  //TODO:: FETCH ALL USERDATA HERE AND THEN SET OURS
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _user.fetchdata(),
+        future:
+            FirebaseFirestore.instance.collection("users").get().then((value) {
+          var z = value.docs;
+          users.setl(z.toList());
+          users.setpartialdata(z.toList());
+          admin.User().setdata(z.where((element) {
+            return element['uid'] == admin.User.userid;
+          }) as Map<String, dynamic>);
+        }),
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.done)
             return Scaffold(
@@ -43,12 +54,15 @@ class _HomePageState extends State<HomePage> {
                       BottomNavigationBarItem(
                           label: 'Search', icon: Icon(Icons.search)),
                       BottomNavigationBarItem(
-                          label: 'Profile', icon: Icon(Icons.person))
+                          label: 'Inbox', icon: Icon(Icons.chat)),
+                      BottomNavigationBarItem(
+                          label: 'Profile', icon: Icon(Icons.person)),
                     ]),
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
                   backgroundColor: Theme.of(context).primaryColor,
-                  title: Text('JMI PLACEMENT CELL'),
+                  title:
+                      value == 3 ? Text("Inbox") : Text('JMI PLACEMENT CELL'),
                   actions: [
                     IconButton(
                         onPressed: () {
@@ -65,7 +79,9 @@ class _HomePageState extends State<HomePage> {
                         ? DashBoard()
                         : value == 2
                             ? SearchPage()
-                            : ProfilePage(""));
+                            : value == 3
+                                ? AllMessages()
+                                : ProfilePage(""));
           else
             return Center(child: CircularProgressIndicator());
         });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-List l = [];
+List l = []; //all users
 List partial = [];
 void setl(List data) {
   l = data;

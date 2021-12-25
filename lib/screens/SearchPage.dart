@@ -19,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   var skillval = "Choose Skill";
   double cgpa = 0;
   bool val = false;
-  List data = Userdata.partialdata();
+  List data = Userdata.l;
   final k = GlobalKey<FormState>();
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
         .then((value) {
       skills = value.data()?['skills'].toList();
     });
-    return await FirebaseFirestore.instance.collection('users').get();
+    // return await FirebaseFirestore.instance.collection('users').get();
   }
 
   @override
@@ -60,14 +60,14 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
-          var x = snap.data as QuerySnapshot<Map<String, dynamic>>;
-          List l = x.docs.toList();
-          log("userdata" + Userdata.l.toString());
-          if (Userdata.l.isEmpty) {
-            Userdata.setl(l);
-            data = l;
-            Userdata.setpartialdata(l);
-          }
+          // var x = snap.data as QuerySnapshot<Map<String, dynamic>>;
+          // // List l = x.docs.toList();
+          // log("userdata" + Userdata.l.toString());
+          // if (Userdata.l.isEmpty) {
+          //   Userdata.setl(l);
+          //   data = l;
+          //   Userdata.setpartialdata(l);
+          // }
           log("data" + data.toString());
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -86,7 +86,7 @@ class _SearchPageState extends State<SearchPage> {
                       onChanged: (s1) {
                         s = s1.toString();
                         setState(() {
-                          data = l;
+                          data = Userdata.l;
                         });
                       },
                       items: [
@@ -162,7 +162,7 @@ class _SearchPageState extends State<SearchPage> {
                                   log("name runn" + val.toString());
                                   if (val != null) field = val;
                                   setState(() {
-                                    data = l.where((element) {
+                                    data = Userdata.l.where((element) {
                                       if ((element['username'] as String)
                                           .toLowerCase()
                                           .startsWith(field.toLowerCase()))
@@ -203,7 +203,7 @@ class _SearchPageState extends State<SearchPage> {
                                   cgpa = v;
                                   setState(() {
                                     log("cgpa " + cgpa.toString());
-                                    data = l.where((element) {
+                                    data = Userdata.l.where((element) {
                                       if (element['CGPA'] >= cgpa) {
                                         log(element['username']);
                                         return true;
@@ -237,7 +237,7 @@ class _SearchPageState extends State<SearchPage> {
                     onChanged: (val) {
                       setState(() {
                         domainval = val.toString();
-                        data = l.where((element) {
+                        data = Userdata.l.where((element) {
                           if (element['domain'] == domainval) {
                             return true;
                           } else
@@ -254,7 +254,7 @@ class _SearchPageState extends State<SearchPage> {
                         setState(() {
                           //TODO::CHANGE STUFF
                           skillval = val.toString();
-                          data = l.where((element) {
+                          data = Userdata.l.where((element) {
                             log(element['skills'].toString());
                             if ((element['skills'] as List)
                                 .contains(skillval)) {
@@ -292,8 +292,7 @@ class _SearchPageState extends State<SearchPage> {
                                   onTap: () {
                                     Navigator.of(context).pushNamed(
                                         'message_screen',
-                                        arguments:
-                                            data[index]); //TODO::aDD IN ROUTES
+                                        arguments: data[index]);
                                   },
                                   child: Icon(Icons.message)),
                               tileColor: Colors.grey.shade300,

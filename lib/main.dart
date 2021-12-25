@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_cell/screens/AllMessages.dart';
 import 'package:placement_cell/screens/AuthScreen.dart';
 import 'package:placement_cell/screens/HomeScreen.dart';
 import 'package:placement_cell/screens/SingleUser.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           'inputform': (context) => InputForm(),
           'singleuser': (context) => SingleUser(),
           'message_screen': (context) => Messages(),
+          'allmessages': (context) => AllMessages()
         },
         home: SplashScreen());
   }
