@@ -9,11 +9,11 @@ class SplashScreen extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, snap) {
           if (snap.hasData) {
-            var t = Timer(Duration(seconds: 2), () {
+            Timer(Duration(seconds: 2), () {
               Navigator.of(context).pushNamed('homepage');
             });
           } else {
-            var t = Timer(Duration(seconds: 2), () {
+            Timer(Duration(seconds: 2), () {
               Navigator.of(context).pushNamed('authscreen');
             });
           }

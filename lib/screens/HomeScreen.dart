@@ -46,13 +46,14 @@ class _HomePageState extends State<HomePage> {
                           label: 'Profile', icon: Icon(Icons.person))
                     ]),
                 appBar: AppBar(
+                  automaticallyImplyLeading: false,
                   backgroundColor: Theme.of(context).primaryColor,
                   title: Text('JMI PLACEMENT CELL'),
                   actions: [
                     IconButton(
                         onPressed: () {
                           FirebaseAuth.instance.signOut().then((value) {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pushNamed('authscreen');
                           });
                         },
                         icon: Icon(Icons.logout))
