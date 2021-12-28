@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_cell/UserMessages.dart';
 import 'package:placement_cell/screens/AllMessages.dart';
 import 'package:placement_cell/screens/DashBoard.dart';
 import 'package:placement_cell/screens/IntroPage.dart';
+import 'package:provider/provider.dart';
 import '../screens/ProfilePage.dart';
 import '../screens/SearchPage.dart';
 import 'dart:developer';
