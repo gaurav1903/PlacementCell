@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 //THIS IS FOR ONE PERSON ONLY SO WE HAVE TO SIMPLY GET FROM SHAREDPREFERENCES AND THEN LOOK AT DOCCHANGES
 //no need to delete messages dont take much storage
 
+//TODO::CURRENT GOAL NOW IS TO FETCH FROM SHARED PREFERECNES TOO AND THEN ADJUST THIS BS ACCORDINGLY
 class Messages extends StatefulWidget {
   @override
   _MessagesState createState() => _MessagesState();
@@ -204,6 +205,7 @@ class _WriteBoxState extends State<WriteBox> {
                       "username": User.username
                     }
                   ]);
+              FocusScope.of(context).unfocus();
               //TODO:: ADD IN SHARED PREFERENCE
               //TODO::ADD TO SCREEN
             },
