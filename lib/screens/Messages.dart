@@ -3,9 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:placement_cell/UserMessages.dart';
 import 'package:placement_cell/userdata.dart';
 import 'dart:developer';
+import '../SqlHelper/Sql.dart';
 import 'package:provider/provider.dart';
 // import '../widgets/Writebox.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 //THIS IS FOR ONE PERSON ONLY SO WE HAVE TO SIMPLY GET FROM SHAREDPREFERENCES AND THEN LOOK AT DOCCHANGES
 //no need to delete messages dont take much storage
@@ -19,8 +20,8 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   var user;
   // TextEditingController controller = TextEditingController();
-  List messages =
-      []; //after adding from shared preferences in form of a map for each message
+  List messages = [];
+
   @override
   void initState() {
     super.initState();
@@ -30,81 +31,90 @@ class _MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     user = ModalRoute.of(context)?.settings.arguments;
     log(user.toString() + " user");
-    return ChangeNotifierProvider<UserMessages>(
-        create: (_) => UserMessages(),
-        builder: (context, widget) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(user['username']),
-              leadingWidth: 100,
-              leading: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.arrow_back)),
-                  CircleAvatar(
-                    child: user["imageurl"].toString().isEmpty
-                        ? Icon(Icons.person)
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(user["imageurl"])),
-                  ),
-                ],
-              ),
-            ),
-            body: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("chats")
-                    .doc(User.userid.toString())
-                    .collection("userchats")
-                    .snapshots(),
-                builder: (context, snap) {
-                  if (snap.connectionState == ConnectionState.waiting)
-                    return Center(child: CircularProgressIndicator());
-                  log(User.userid.toString());
-
-                  var z = (snap.data as QuerySnapshot<Map<String, dynamic>>)
-                      .docChanges
-                      .where((element) {
-                    return element.doc['sentby'] == user['uid'];
-                  }).toList();
-                  var x = Provider.of<UserMessages>(context, listen: false);
-                  messages += z.map((e) {
-                    return e.doc;
-                  }).toList();
-                  if (x.messages.isEmpty) x.setmessages(messages);
-                  // log(z.length.toString() + " look here at doc changes");
-                  return Consumer<UserMessages>(
-                      builder: (context, prod, child) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height - 50,
-                      child: Column(
+    return FutureBuilder(
+        future: DBhelper.givemessages(user['uid']).then((value) {
+          value.forEach((element) {
+            log(element.toString());
+            messages.add(element);
+          });
+        }),
+        builder: (context, snap) {
+          return ChangeNotifierProvider<UserMessages>(
+              create: (_) => UserMessages(messages),
+              builder: (context, widget) {
+                return Scaffold(
+                    appBar: AppBar(
+                      title: Text(user['username']),
+                      leadingWidth: 100,
+                      leading: Row(
                         children: [
-                          Expanded(
-                            child: ListView.builder(
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: MessageBubble(
-                                      x.messages[index]["text"],
-                                      x.messages[index]["sentby"] ==
-                                          User.userid),
-                                );
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
                               },
-                              itemCount: x.messages.length,
-                            ),
+                              icon: Icon(Icons.arrow_back)),
+                          CircleAvatar(
+                            child: user["imageurl"].toString().isEmpty
+                                ? Icon(Icons.person)
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(user["imageurl"])),
                           ),
-                          WriteBox(user)
                         ],
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.max,
                       ),
-                    );
-                  });
-                }),
-          );
+                    ),
+                    body: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("chats")
+                            .doc(User.userid.toString())
+                            .collection("userchats")
+                            .snapshots(),
+                        builder: (context, snap) {
+                          if (snap.connectionState == ConnectionState.waiting)
+                            return Center(child: CircularProgressIndicator());
+                          log(User.userid.toString());
+
+                          var z =
+                              (snap.data as QuerySnapshot<Map<String, dynamic>>)
+                                  .docChanges
+                                  .where((element) {
+                            return element.doc['sentby'] == user['uid'];
+                          }).toList();
+                          messages += z.map((e) {
+                            return e.doc;
+                          }).toList();
+                          // log(z.length.toString() + " look here at doc changes");
+                          return Consumer<UserMessages>(
+                              builder: (context, prod, child) {
+                            // prod.setmessages(messages);
+                            // if (prod.messages.isEmpty) prod.setmessages(messages);
+                            return Container(
+                              height: MediaQuery.of(context).size.height - 50,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: MessageBubble(
+                                              prod.messages[index]["text"],
+                                              prod.messages[index]["sentby"] ==
+                                                  User.userid),
+                                        );
+                                      },
+                                      itemCount: prod.messages.length,
+                                    ),
+                                  ),
+                                  WriteBox(user)
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.max,
+                              ),
+                            );
+                          });
+                        }));
+              });
         });
   }
 }
@@ -114,7 +124,7 @@ class _MessagesState extends State<Messages> {
 //TODO:: 3RD --> FILES AND OPENS
 //TODO:: 4TH-> FOLLOW FUNCTIONALITY
 //TODO::HOW TO DO IT?
-//FIRST LOAD CACHE FROM SHAREDPREFERENCES THEN FROM DOCCHANGES
+//FIRST LOAD CACHE FROM SQLITE THEN FROM DOCCHANGES
 //DRAFT1 ->>LOAD ALL DOCS SIMPLY AND THEN GET ALL THE CHANGED
 
 //TODO:: NEXT STEP WOULD BE TO ADD NEW MESSAGES TO SCREEN and shared preferences
@@ -195,6 +205,15 @@ class _WriteBoxState extends State<WriteBox> {
                 "sentby": User.userid,
                 "time": Timestamp.now(),
                 "username": User.username,
+              }).then((value) {
+                DBhelper.insert(widget.user['uid'], {
+                  'sentto': widget.user['uid'],
+                  'time': Timestamp.now().toString(),
+                  'sentby': User.userid,
+                  'msgid': value.id,
+                  'seen': 'TRUE',
+                  'text': text
+                });
               });
               x.setmessages(x.messages +
                   [
@@ -206,6 +225,7 @@ class _WriteBoxState extends State<WriteBox> {
                     }
                   ]);
               FocusScope.of(context).unfocus();
+
               //TODO:: ADD IN SHARED PREFERENCE
               //TODO::ADD TO SCREEN
             },
