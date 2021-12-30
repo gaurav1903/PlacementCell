@@ -11,6 +11,7 @@ class AllMessages extends StatefulWidget {
   _AllMessagesState createState() => _AllMessagesState();
 }
 
+//TODO;;SHOW ALL CONTACTS HERE AND SHOW THOSE ON TOP WHO HAVE SENT MESSGAGES THATS UNSEEN
 class _AllMessagesState extends State<AllMessages> {
   @override
   Widget build(BuildContext context) {
@@ -25,10 +26,10 @@ class _AllMessagesState extends State<AllMessages> {
             return Center(child: CircularProgressIndicator());
           var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
           log(z.length.toString() + " messgaes");
-          log(z[0]["sentby"].toString());
-          log(Allusers.l.where((element) {
-            return element["uid"] == z[0]["sentby"];
-          }).toString());
+          // log(z[0]["sentby"].toString());
+          // log(Allusers.l.where((element) {
+          //   return element["uid"] == z[0]["sentby"];
+          // }).toString());
           return ListView.builder(
             itemBuilder: (ctx, index) {
               return GestureDetector(

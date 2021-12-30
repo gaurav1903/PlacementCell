@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
+import 'package:placement_cell/userdata.dart';
 
 class DBhelper {
   static Future<sql.Database> intitialisedb() async {
     String dbpath = await sql.getDatabasesPath();
-    return await sql
-        .openDatabase(path.join(dbpath, "usermessages.db".toString()));
+    final db =
+        await sql.openDatabase(path.join(dbpath, "usermessages.db".toString()));
+    return db;
   }
 
   static Future<void> insert(
       String tablename, Map<String, dynamic> data) async {
     log('dbhelper insert ran');
     sql.Database db = await DBhelper.intitialisedb();
-    // await db.execute("drop table " + data['sentto'].toString());
+
     await db.execute("create table if not exists " +
         data['sentto'].toString() +
         "(msgid TEXT,sentby TEXT,sentto TEXT,text TEXT,time TEXT,seen BOOL)");
@@ -24,7 +26,8 @@ class DBhelper {
 
   static Future<List<Map<String, dynamic>>> givemessages(String userid) async {
     sql.Database db = await DBhelper.intitialisedb();
-    return await db.query(userid.toString()); //TODO:: WE HAVE TO ADD ORDER BY
+    return await db.query(userid.toString(),
+        orderBy: "time"); //TODO:: WE HAVE TO ADD ORDER BY
   }
   //TODO::TEST THIS SETUP
 }

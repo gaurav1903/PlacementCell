@@ -3,15 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:placement_cell/UserMessages.dart';
 import 'package:placement_cell/userdata.dart';
 import 'dart:developer';
+
 import '../SqlHelper/Sql.dart';
 import 'package:provider/provider.dart';
 // import '../widgets/Writebox.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
-//THIS IS FOR ONE PERSON ONLY SO WE HAVE TO SIMPLY GET FROM SHAREDPREFERENCES AND THEN LOOK AT DOCCHANGES
-//no need to delete messages dont take much storage
-
-//TODO::CURRENT GOAL NOW IS TO FETCH FROM SHARED PREFERECNES TOO AND THEN ADJUST THIS BS ACCORDINGLY
+//TODO::LOTS OF TESTING REMAINING
 class Messages extends StatefulWidget {
   @override
   _MessagesState createState() => _MessagesState();
@@ -64,25 +61,36 @@ class _MessagesState extends State<Messages> {
                       ),
                     ),
                     body: StreamBuilder(
+                        initialData: messages,
                         stream: FirebaseFirestore.instance
                             .collection("chats")
                             .doc(User.userid.toString())
                             .collection("userchats")
+                            .orderBy("time")
                             .snapshots(),
                         builder: (context, snap) {
                           if (snap.connectionState == ConnectionState.waiting)
                             return Center(child: CircularProgressIndicator());
                           log(User.userid.toString());
-
                           var z =
                               (snap.data as QuerySnapshot<Map<String, dynamic>>)
                                   .docChanges
                                   .where((element) {
                             return element.doc['sentby'] == user['uid'];
                           }).toList();
+                          log(z.toString());
                           messages += z.map((e) {
+                            DBhelper.insert(user['uid'], {
+                              'sentto': User.userid,
+                              'time': e.doc['time'],
+                              'sentby': user['uid'],
+                              'msgid': e.doc.id,
+                              'seen': 'TRUE',
+                              'text': e.doc['text']
+                            });
                             return e.doc;
                           }).toList();
+
                           // log(z.length.toString() + " look here at doc changes");
                           return Consumer<UserMessages>(
                               builder: (context, prod, child) {
