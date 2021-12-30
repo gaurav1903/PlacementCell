@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
-import 'package:placement_cell/userdata.dart';
 
 class DBhelper {
   static Future<sql.Database> intitialisedb() async {
