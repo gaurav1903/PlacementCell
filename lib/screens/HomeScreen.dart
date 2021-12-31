@@ -21,18 +21,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int value = 0;
-  //TODO:: FETCH ALL USERDATA HERE AND THEN SET OURS
+  //TODO:: Problem here not setting data
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future:
+        future: //TODO::STOP IT FROM RUNNING EVERY TIME WE SWITCH TABS
             FirebaseFirestore.instance.collection("users").get().then((value) {
           var z = value.docs;
+          log("running z.docs");
+          admin.User.setdata(z.firstWhere((element) {
+            return element.data()['uid'].toString() ==
+                admin.User.userid.toString();
+          }).data());
           users.setl(z.toList());
           users.setpartialdata(z.toList());
-          admin.User().setdata(z.where((element) {
-            return element['uid'] == admin.User.userid;
-          }) as Map<String, dynamic>);
         }),
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.done)

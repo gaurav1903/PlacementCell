@@ -27,8 +27,9 @@ class User {
 
 //TODO::SET ALL THE DATA HERE
   //CALL FROM HOMEPAGE AND FETCH ALL DATA AND THEN SET HERE
-  void setdata(Map<String, dynamic> userdata) {
-    complete = userdata['complete'];
+  static void setdata(Map<String, dynamic> userdata) {
+    // log(userdata.toString() + "userdata");
+    // complete = userdata['complete'];
     username = userdata['username'];
     batch = userdata['batch'];
     var temp = userdata['mode'];
@@ -42,26 +43,26 @@ class User {
       mode = Mode.PlacementOfficer;
   }
 
-  Future<void> fetchdata() async {
-    var uid = userid.toString();
-    FirebaseFirestore.instance.collection('users').doc(uid).get().then((value) {
-      var completedata = value.data();
-      // log(completedata.toString());
-      complete = completedata != null ? completedata['complete'] : '';
-      // name = completedata != null ? completedata['name'] : '';
-      username = completedata != null ? completedata['username'] : '';
-      batch = completedata != null ? completedata['batch'] : '';
-      var temp = completedata != null ? completedata['mode'] : Mode.Student;
-      domain = completedata != null ? completedata['domain'] : "";
-      // log("Data fetching is done" + username.toString());
-      if (temp == 'Student')
-        mode = Mode.Student;
-      else if (temp == 'Recruiter')
-        mode = Mode.Recruiter;
-      else
-        mode = Mode.PlacementOfficer;
-    });
-  }
+  // Future<void> fetchdata() async {
+  //   var uid = userid.toString();
+  //   FirebaseFirestore.instance.collection('users').doc(uid).get().then((value) {
+  //     var completedata = value.data();
+  //     // log(completedata.toString());
+  //     complete = completedata != null ? completedata['complete'] : '';
+  //     // name = completedata != null ? completedata['name'] : '';
+  //     username = completedata != null ? completedata['username'] : '';
+  //     batch = completedata != null ? completedata['batch'] : '';
+  //     var temp = completedata != null ? completedata['mode'] : Mode.Student;
+  //     domain = completedata != null ? completedata['domain'] : "";
+  //     // log("Data fetching is done" + username.toString());
+  //     if (temp == 'Student')
+  //       mode = Mode.Student;
+  //     else if (temp == 'Recruiter')
+  //       mode = Mode.Recruiter;
+  //     else
+  //       mode = Mode.PlacementOfficer;
+  //   });
+  // }
 }
 
 String stringrole(String mode) {

@@ -60,14 +60,6 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
-          // var x = snap.data as QuerySnapshot<Map<String, dynamic>>;
-          // // List l = x.docs.toList();
-          // log("userdata" + Userdata.l.toString());
-          // if (Userdata.l.isEmpty) {
-          //   Userdata.setl(l);
-          //   data = l;
-          //   Userdata.setpartialdata(l);
-          // }
           log("data" + data.toString());
           return Padding(
             padding: const EdgeInsets.all(8.0),
