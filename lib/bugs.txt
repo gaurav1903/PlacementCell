@@ -1,2 +1,2 @@
 Current bugs
-1) while sending messages username is going as null
+1) currently messages are showing twice

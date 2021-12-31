@@ -18,9 +18,9 @@ class DBhelper {
     sql.Database db = await DBhelper.intitialisedb();
 
     await db.execute("create table if not exists " +
-        data['sentto'].toString() +
+        tablename +
         "(msgid TEXT,sentby TEXT,sentto TEXT,text TEXT,time TEXT,seen BOOL)");
-    db.insert(data['sentto'].toString(), data,
+    db.insert(tablename, data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }
 

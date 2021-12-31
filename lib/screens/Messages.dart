@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 // import '../widgets/Writebox.dart';
 
 //TODO::LOTS OF TESTING REMAINING
+//TODO:: 2 TABLES FOR EACH USER
 class Messages extends StatefulWidget {
   int streamcode = 0;
   @override
@@ -38,14 +39,17 @@ class _MessagesState extends State<Messages> {
     user = ModalRoute.of(context)?.settings.arguments;
     log("this complete build ran");
     return FutureBuilder(
-        // future: DBhelper.givemessages(user['uid']).then((value) {
-        //   value.forEach((element) {
-        //     log(element.toString() + " from db ");
-        //     messages.add(element);
-        //   });
-        // }),
-        future: Future.value(), //TODO::JUST FOR TESTING
+        future: DBhelper.givemessages(user['uid']).then((value) {
+          value.forEach((element) {
+            messages.add(element);
+            log(element.toString() + "forn db");
+          });
+          log("this is not running i think");
+        }),
+        // future: Future.value(), //TODO::JUST FOR TESTING
         builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.waiting)
+            return Center(child: CircularProgressIndicator());
           return ChangeNotifierProvider<UserMessages>(
               create: (_) => UserMessages(messages),
               builder: (context, widget) {
@@ -76,6 +80,7 @@ class _MessagesState extends State<Messages> {
                             .collection("chats")
                             .doc(User.userid.toString())
                             .collection("userchats")
+                            .where("sentby", isEqualTo: user['uid'])
                             .orderBy("time")
                             .snapshots()
                           ..listen((event) {
@@ -99,6 +104,13 @@ class _MessagesState extends State<Messages> {
                                 });
                                 return e.doc.data();
                               }).toList();
+                              log("cheking db insert");
+                              DBhelper.givemessages(user['uid']).then((value) {
+                                log(value.toString() + "value of db");
+                                value.forEach((element) {
+                                  log(element.toString());
+                                });
+                              });
                               log("here is messages after adding firebase changes " +
                                   messages.toString());
                               Provider.of<UserMessages>(context, listen: false)
