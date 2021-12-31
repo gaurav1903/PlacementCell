@@ -21,24 +21,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int value = 0;
-  //TODO:: Problem here not setting data
+  Future<void> func() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("role", isEqualTo: "Student")
+        .get()
+        .then((value) {
+      var z = value.docs;
+      log("running z.docs");
+      admin.User.setdata(z.firstWhere((element) {
+        return element.data()['uid'].toString() == admin.User.userid.toString();
+      }).data());
+      users.setl(z.toList());
+      users.setpartialdata(z.toList());
+    });
+  }
+
+  Future f = Future.value();
+  @override
+  void initState() {
+    f = func();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection("users")
-            .where("role", isEqualTo: "Student")
-            .get()
-            .then((value) {
-          var z = value.docs;
-          log("running z.docs");
-          admin.User.setdata(z.firstWhere((element) {
-            return element.data()['uid'].toString() ==
-                admin.User.userid.toString();
-          }).data());
-          users.setl(z.toList());
-          users.setpartialdata(z.toList());
-        }),
+        future: f,
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.done)
             return Scaffold(
