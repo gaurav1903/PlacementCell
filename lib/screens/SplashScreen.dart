@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:placement_cell/UserMessages.dart';
 import 'dart:async';
+
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatelessWidget {
   @override

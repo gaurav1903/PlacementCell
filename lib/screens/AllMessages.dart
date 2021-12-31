@@ -11,6 +11,7 @@ class AllMessages extends StatefulWidget {
   _AllMessagesState createState() => _AllMessagesState();
 }
 
+//TODO;;SHOW ALL CONTACTS HERE AND SHOW THOSE ON TOP WHO HAVE SENT MESSGAGES THATS UNSEEN
 class _AllMessagesState extends State<AllMessages> {
   @override
   Widget build(BuildContext context) {

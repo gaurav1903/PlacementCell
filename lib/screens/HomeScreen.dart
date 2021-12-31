@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_cell/UserMessages.dart';
 import 'package:placement_cell/screens/AllMessages.dart';
 import 'package:placement_cell/screens/DashBoard.dart';
 import 'package:placement_cell/screens/IntroPage.dart';
+import 'package:provider/provider.dart';
 import '../screens/ProfilePage.dart';
 import '../screens/SearchPage.dart';
 import 'dart:developer';
@@ -19,7 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int value = 0;
-  //TODO:: FETCH ALL USERDATA HERE AND THEN SET OURS
+  //TODO:: Problem here not setting data
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -29,11 +31,13 @@ class _HomePageState extends State<HomePage> {
             .get()
             .then((value) {
           var z = value.docs;
+          log("running z.docs");
+          admin.User.setdata(z.firstWhere((element) {
+            return element.data()['uid'].toString() ==
+                admin.User.userid.toString();
+          }).data());
           users.setl(z.toList());
           users.setpartialdata(z.toList());
-          admin.User().setdata(z.where((element) {
-            return element['uid'] == admin.User.userid;
-          }) as Map<String, dynamic>);
         }),
         builder: (ctx, snap) {
           if (snap.connectionState == ConnectionState.done)
