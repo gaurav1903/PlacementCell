@@ -24,10 +24,10 @@ class DBhelper {
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }
 
-  static Future<List<Map<String, dynamic>>> givemessages(String userid) async {
+  static Future<List<Map<String, dynamic>>> givemessages(
+      String tablename) async {
     sql.Database db = await DBhelper.intitialisedb();
-    return await db.query(userid.toString(),
-        orderBy: "time"); //TODO:: WE HAVE TO ADD ORDER BY
+    return await db.query(tablename, orderBy: "time");
   }
   //TODO::TEST THIS SETUP
 }

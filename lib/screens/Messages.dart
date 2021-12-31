@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 //TODO:: 2 TABLES FOR EACH USER
 class Messages extends StatefulWidget {
   int streamcode = 0;
+  int first = 0;
   @override
   _MessagesState createState() => _MessagesState();
 }
@@ -21,11 +22,35 @@ class _MessagesState extends State<Messages> {
 
   // TextEditingController controller = TextEditingController();
   List messages = [];
+  List sentmsgs = [];
+  List recvmsgs = [];
+  Future f = Future.value();
+  Future<void> getdata() async {
+    await DBhelper.givemessages(user['uid'] + "sent").then((value) {
+      value.forEach((element) {
+        sentmsgs.add(element);
+      });
+    });
+    await DBhelper.givemessages(user['uid'] + "recv").then((value) {
+      value.forEach((element) {
+        recvmsgs.add(element);
+        // log(element.toString() + "forn db");
+      });
+    });
+  }
 
   @override
   void initState() {
     widget.streamcode = 0;
     super.initState();
+  }
+
+  bool isfirst() {
+    widget.first++;
+    if (widget.first > 2)
+      return false;
+    else
+      return true; //true
   }
 
   int update_streamcode() {
@@ -39,19 +64,12 @@ class _MessagesState extends State<Messages> {
     user = ModalRoute.of(context)?.settings.arguments;
     log("this complete build ran");
     return FutureBuilder(
-        future: DBhelper.givemessages(user['uid']).then((value) {
-          value.forEach((element) {
-            messages.add(element);
-            log(element.toString() + "forn db");
-          });
-          log("this is not running i think");
-        }),
-        // future: Future.value(), //TODO::JUST FOR TESTING
+        future: f,
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           return ChangeNotifierProvider<UserMessages>(
-              create: (_) => UserMessages(messages),
+              create: (_) => UserMessages(),
               builder: (context, widget) {
                 return Scaffold(
                     appBar: AppBar(
@@ -75,7 +93,8 @@ class _MessagesState extends State<Messages> {
                       ),
                     ),
                     body: StreamBuilder(
-                        initialData: messages,
+                        initialData:
+                            recvmsgs, //TODO::CHANGE THIS AND SETUP MESSAGES  //check this properly
                         stream: FirebaseFirestore.instance
                             .collection("chats")
                             .doc(User.userid.toString())
@@ -84,17 +103,41 @@ class _MessagesState extends State<Messages> {
                             .orderBy("time")
                             .snapshots()
                           ..listen((event) {
-                            log(event.docChanges.toString() +
-                                "doc changes in stream builder");
+                            var z = Provider.of<UserMessages>(context,
+                                listen: false);
+
+                            log("here wee go" +
+                                recvmsgs.toString() +
+                                "  " +
+                                sentmsgs.toString());
+                            if (isfirst() == true) {
+                              int n = -z.recvmsgs.length +
+                                  event.docChanges.toList().length;
+                              log(n.toString() + " n");
+                              int lastindex = event.docChanges.length - 1;
+                              while (n != 0) {
+                                var p = event.docChanges[lastindex].doc;
+                                recvmsgs.add(p.data());
+                                DBhelper.insert(user['uid'] + "recv", {
+                                  'sentto': User.userid,
+                                  'time': p.data()?['time'].toString(),
+                                  'sentby': user['uid'],
+                                  'msgid': p.id,
+                                  'seen': 'TRUE',
+                                  'text': p.data()?['text']
+                                });
+                                n--;
+                                lastindex--;
+                              }
+                            }
                             if (event.docChanges.isNotEmpty &&
-                                update_streamcode() == 1) {
-                              var z = event.docChanges.where((element) {
-                                return element.doc['sentby'] == user['uid'];
-                              }).toList();
+                                update_streamcode() == 1 &&
+                                isfirst() == false) {
+                              var z = event.docChanges.toList();
                               log("here is messages initially" +
-                                  messages.toString());
-                              messages += z.map((e) {
-                                DBhelper.insert(user['uid'], {
+                                  recvmsgs.toString());
+                              recvmsgs += z.map((e) {
+                                DBhelper.insert(user['uid'] + "recv", {
                                   'sentto': User.userid,
                                   'time': e.doc.data()?['time'].toString(),
                                   'sentby': user['uid'],
@@ -104,18 +147,17 @@ class _MessagesState extends State<Messages> {
                                 });
                                 return e.doc.data();
                               }).toList();
-                              log("cheking db insert");
-                              DBhelper.givemessages(user['uid']).then((value) {
-                                log(value.toString() + "value of db");
-                                value.forEach((element) {
-                                  log(element.toString());
-                                });
-                              });
-                              log("here is messages after adding firebase changes " +
-                                  messages.toString());
-                              Provider.of<UserMessages>(context, listen: false)
-                                  .setmessages(messages);
+                              // log("cheking db insert");
+                              // DBhelper.givemessages(user['uid']).then((value) {
+                              //   log(value.toString() + "value of db");
+                              //   value.forEach((element) {
+                              //     log(element.toString());
+                              //   });
+                              // });
                             }
+                            z.setrecvmsgs(recvmsgs);
+                            z.setsentmsgs(sentmsgs);
+                            log("messages finally " + z.messages.toString());
                           }),
                         builder: (context, snap) {
                           if (snap.connectionState == ConnectionState.waiting)
@@ -242,7 +284,7 @@ class _WriteBoxState extends State<WriteBox> {
                 "time": Timestamp.now(),
                 "username": User.username,
               }).then((value) {
-                DBhelper.insert(widget.user['uid'], {
+                DBhelper.insert(widget.user['uid'] + "sent", {
                   'sentto': widget.user['uid'],
                   'time': Timestamp.now().toString(),
                   'sentby': User.userid,
@@ -251,13 +293,15 @@ class _WriteBoxState extends State<WriteBox> {
                   'text': text
                 });
               });
-              x.setmessages(x.messages +
+              //TODO::HERE WE ACTUALLY HAVE TO MANAGE STATE FOR RECVMSGS AND SENTMSGS
+              x.setsentmsgs(x.sentmsgs +
                   [
                     {
+                      'sentto': widget.user['uid'],
                       "sentby": User.userid,
                       "text": text,
                       "time": Timestamp.now(),
-                      "username": User.username
+                      "username": User.username,
                     }
                   ]);
               FocusScope.of(context).unfocus();
