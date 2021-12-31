@@ -24,11 +24,6 @@ class _AllMessagesState extends State<AllMessages> {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
-          log(z.length.toString() + " messgaes");
-          log(z[0]["sentby"].toString());
-          log(Allusers.l.where((element) {
-            return element["uid"] == z[0]["sentby"];
-          }).toString());
           return ListView.builder(
             itemBuilder: (ctx, index) {
               return GestureDetector(

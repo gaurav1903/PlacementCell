@@ -23,8 +23,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future:
-            FirebaseFirestore.instance.collection("users").get().then((value) {
+        future: FirebaseFirestore.instance
+            .collection("users")
+            .where("role", isEqualTo: "Student")
+            .get()
+            .then((value) {
           var z = value.docs;
           users.setl(z.toList());
           users.setpartialdata(z.toList());
