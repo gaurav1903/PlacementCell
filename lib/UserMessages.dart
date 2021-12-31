@@ -28,7 +28,7 @@ class UserMessages with ChangeNotifier {
         if (a['time'].toString().compareTo(b['time'].toString()) < 0) return 0;
         return 1;
       }); //returns true means a can be put before b
-
+    log("messages length " + messages.length.toString());
     notifyListeners();
   }
 }

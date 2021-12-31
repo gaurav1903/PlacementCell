@@ -19,7 +19,7 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   var user;
-
+  final scrollcontroller = ScrollController();
   // TextEditingController controller = TextEditingController();
   List messages = [];
   List sentmsgs = [];
@@ -105,14 +105,14 @@ class _MessagesState extends State<Messages> {
                           ..listen((event) {
                             var z = Provider.of<UserMessages>(context,
                                 listen: false);
-
-                            log("here wee go" +
-                                recvmsgs.toString() +
-                                "  " +
-                                sentmsgs.toString());
+                            log("docs length" + event.docs.length.toString());
+                            // log("here wee go" +
+                            //     recvmsgs.toString() +
+                            //     "  " +
+                            //     sentmsgs.toString());
                             if (isfirst() == true) {
-                              int n = -z.recvmsgs.length +
-                                  event.docChanges.toList().length;
+                              int n = event.docChanges.toList().length -
+                                  z.recvmsgs.length;
                               log(n.toString() + " n");
                               int lastindex = event.docChanges.length - 1;
                               while (n != 0) {
@@ -130,9 +130,14 @@ class _MessagesState extends State<Messages> {
                                 lastindex--;
                               }
                             }
+
                             if (event.docChanges.isNotEmpty &&
-                                update_streamcode() == 1 &&
                                 isfirst() == false) {
+                              scrollcontroller.animateTo(
+                                  scrollcontroller.position.maxScrollExtent +
+                                      65,
+                                  duration: Duration(seconds: 2),
+                                  curve: Curves.easeInOut);
                               var z = event.docChanges.toList();
                               log("here is messages initially" +
                                   recvmsgs.toString());
@@ -172,6 +177,7 @@ class _MessagesState extends State<Messages> {
                                 children: [
                                   Expanded(
                                     child: ListView.builder(
+                                      controller: scrollcontroller,
                                       itemBuilder: (context, index) {
                                         return Padding(
                                           padding: const EdgeInsets.all(10),
