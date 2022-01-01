@@ -14,7 +14,7 @@ class DBhelper {
 
   static Future<void> insert(
       String tablename, Map<String, dynamic> data) async {
-    log('dbhelper insert ran');
+    log('dbhelper insert ran tablename= $tablename');
     sql.Database db = await DBhelper.intitialisedb();
 
     await db.execute("create table if not exists " +
@@ -26,8 +26,9 @@ class DBhelper {
 
   static Future<List<Map<String, dynamic>>> givemessages(
       String tablename) async {
-    log("givemessages ran");
+    log("givemessages ran $tablename");
     sql.Database db = await DBhelper.intitialisedb();
+    // db.execute("DROP TABLE $tablename");
     return await db.query(tablename, orderBy: "time");
   }
   //TODO::TEST THIS SETUP

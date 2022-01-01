@@ -28,20 +28,20 @@ class _MessagesState extends State<Messages> {
 
   Future<void> getdata() async {
     log("get data ran");
-    DBhelper.givemessages(user['uid'] + "sent").then((value) {
-      log("this ran too");
+//TODO::SEE IF ONE FAILS OTHERS SHOULD STILL WORK
+    await DBhelper.givemessages(user['uid'] + "recv").then((value) {
       log(value.toString());
+      value.forEach((element) {
+        recvmsgs.add(element);
+        log(element.toString() + "forn db recvmsgs");
+      });
+    });
+    await DBhelper.givemessages(user['uid'] + "sent").then((value) {
       value.forEach((element) {
         sentmsgs.add(element);
       });
     });
-    DBhelper.givemessages(user['uid'] + "recv").then((value) {
-      value.forEach((element) {
-        recvmsgs.add(element);
-        // log(element.toString() + "forn db");
-      });
-    });
-    log(recvmsgs.toString() + "lists fetched fform db " + sentmsgs.toString());
+    log("lists fetched fform db " + recvmsgs.toString());
   }
 
   // Timestamp t = Timestamp.now();
@@ -118,11 +118,10 @@ class _MessagesState extends State<Messages> {
                               var z = Provider.of<UserMessages>(context,
                                   listen: false);
                               log("docs length" + event.docs.length.toString());
-                              // log("here wee go" +
-                              //     recvmsgs.toString() +
-                              //     "  " +
-                              //     sentmsgs.toString());
+                              // sentmsgs = z.sentmsgs;
                               if (isfirst() == true) {
+                                z.setsentmsgs(sentmsgs);
+                                z.setrecvmsgs(recvmsgs);
                                 int n = event.docChanges.toList().length -
                                     z.recvmsgs.length;
                                 log(n.toString() + " n");
@@ -141,6 +140,14 @@ class _MessagesState extends State<Messages> {
                                   n--;
                                   lastindex--;
                                 }
+                                log("cheking db insert");
+                                DBhelper.givemessages(user['uid'] + "recv")
+                                    .then((value) {
+                                  log(value.length.toString() + "value of db");
+                                  value.forEach((element) {
+                                    log(element.toString());
+                                  });
+                                });
                               }
 
                               if (event.docChanges.isNotEmpty &&
@@ -150,10 +157,10 @@ class _MessagesState extends State<Messages> {
                                         65,
                                     duration: Duration(seconds: 2),
                                     curve: Curves.easeInOut);
-                                var z = event.docChanges.toList();
+                                var x = event.docChanges.toList();
                                 log("here is messages initially" +
                                     recvmsgs.toString());
-                                recvmsgs += z.map((e) {
+                                recvmsgs += x.map((e) {
                                   DBhelper.insert(user['uid'] + "recv", {
                                     'sentto': User.userid,
                                     'time': e.doc.data()?['time'].toString(),
@@ -164,16 +171,20 @@ class _MessagesState extends State<Messages> {
                                   });
                                   return e.doc.data();
                                 }).toList();
-                                // log("cheking db insert");
-                                // DBhelper.givemessages(user['uid']).then((value) {
-                                //   log(value.toString() + "value of db");
-                                //   value.forEach((element) {
-                                //     log(element.toString());
-                                //   });
-                                // });
+                                log("cheking db insert");
+                                DBhelper.givemessages(user['uid'] + "recv")
+                                    .then((value) {
+                                  log(value.length.toString() + "value of db");
+                                  value.forEach((element) {
+                                    log(element.toString());
+                                  });
+                                });
+                                sentmsgs =
+                                    z.sentmsgs; //TODO:: JUST TO HAVE IT IN SYNC
                               }
                               z.setrecvmsgs(recvmsgs);
-                              z.setsentmsgs(sentmsgs);
+                              // z.setsentmsgs(sentmsgs);
+
                               log("messages finally " + z.messages.toString());
                             }),
                           builder: (context, snap) {
