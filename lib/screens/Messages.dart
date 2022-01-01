@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 //TODO:: 2 TABLES FOR EACH USER
 class Messages extends StatefulWidget {
   int streamcode = 0;
+  Future f = Future.value();
   int first = 0;
   @override
   _MessagesState createState() => _MessagesState();
@@ -24,25 +25,37 @@ class _MessagesState extends State<Messages> {
   List messages = [];
   List sentmsgs = [];
   List recvmsgs = [];
-  Future f = Future.value();
+
   Future<void> getdata() async {
-    await DBhelper.givemessages(user['uid'] + "sent").then((value) {
+    log("get data ran");
+    DBhelper.givemessages(user['uid'] + "sent").then((value) {
+      log("this ran too");
+      log(value.toString());
       value.forEach((element) {
         sentmsgs.add(element);
       });
     });
-    await DBhelper.givemessages(user['uid'] + "recv").then((value) {
+    DBhelper.givemessages(user['uid'] + "recv").then((value) {
       value.forEach((element) {
         recvmsgs.add(element);
         // log(element.toString() + "forn db");
       });
     });
+    log(recvmsgs.toString() + "lists fetched fform db " + sentmsgs.toString());
   }
 
+  // Timestamp t = Timestamp.now();
   @override
   void initState() {
     widget.streamcode = 0;
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    user = ModalRoute.of(context)?.settings.arguments;
+    widget.f = getdata();
+    super.didChangeDependencies();
   }
 
   bool isfirst() {
@@ -61,144 +74,146 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    user = ModalRoute.of(context)?.settings.arguments;
     log("this complete build ran");
     return FutureBuilder(
-        future: f,
+        future: widget.f,
         builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting)
-            return Center(child: CircularProgressIndicator());
-          return ChangeNotifierProvider<UserMessages>(
-              create: (_) => UserMessages(),
-              builder: (context, widget) {
-                return Scaffold(
-                    appBar: AppBar(
-                      title: Text(user['username']),
-                      leadingWidth: 100,
-                      leading: Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: Icon(Icons.arrow_back)),
-                          CircleAvatar(
-                            child: user["imageurl"].toString().isEmpty
-                                ? Icon(Icons.person)
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Image.network(user["imageurl"])),
-                          ),
-                        ],
+          if (snap.connectionState == ConnectionState.done) {
+            log(recvmsgs.toString() + " msgs " + sentmsgs.toString());
+            return ChangeNotifierProvider<UserMessages>(
+                create: (_) => UserMessages(),
+                builder: (context, widget) {
+                  return Scaffold(
+                      appBar: AppBar(
+                        title: Text(user['username']),
+                        leadingWidth: 100,
+                        leading: Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: Icon(Icons.arrow_back)),
+                            CircleAvatar(
+                              child: user["imageurl"].toString().isEmpty
+                                  ? Icon(Icons.person)
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(user["imageurl"])),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    body: StreamBuilder(
-                        initialData:
-                            recvmsgs, //TODO::CHANGE THIS AND SETUP MESSAGES  //check this properly
-                        stream: FirebaseFirestore.instance
-                            .collection("chats")
-                            .doc(User.userid.toString())
-                            .collection("userchats")
-                            .where("sentby", isEqualTo: user['uid'])
-                            .orderBy("time")
-                            .snapshots()
-                          ..listen((event) {
-                            var z = Provider.of<UserMessages>(context,
-                                listen: false);
-                            log("docs length" + event.docs.length.toString());
-                            // log("here wee go" +
-                            //     recvmsgs.toString() +
-                            //     "  " +
-                            //     sentmsgs.toString());
-                            if (isfirst() == true) {
-                              int n = event.docChanges.toList().length -
-                                  z.recvmsgs.length;
-                              log(n.toString() + " n");
-                              int lastindex = event.docChanges.length - 1;
-                              while (n != 0) {
-                                var p = event.docChanges[lastindex].doc;
-                                recvmsgs.add(p.data());
-                                DBhelper.insert(user['uid'] + "recv", {
-                                  'sentto': User.userid,
-                                  'time': p.data()?['time'].toString(),
-                                  'sentby': user['uid'],
-                                  'msgid': p.id,
-                                  'seen': 'TRUE',
-                                  'text': p.data()?['text']
-                                });
-                                n--;
-                                lastindex--;
+                      body: StreamBuilder(
+                          initialData:
+                              recvmsgs, //TODO::CHANGE THIS AND SETUP MESSAGES  //check this properly
+                          stream: FirebaseFirestore.instance
+                              .collection("chats")
+                              .doc(User.userid.toString())
+                              .collection("userchats")
+                              .where("sentby", isEqualTo: user['uid'])
+                              .orderBy("time")
+                              .snapshots()
+                            ..listen((event) {
+                              var z = Provider.of<UserMessages>(context,
+                                  listen: false);
+                              log("docs length" + event.docs.length.toString());
+                              // log("here wee go" +
+                              //     recvmsgs.toString() +
+                              //     "  " +
+                              //     sentmsgs.toString());
+                              if (isfirst() == true) {
+                                int n = event.docChanges.toList().length -
+                                    z.recvmsgs.length;
+                                log(n.toString() + " n");
+                                int lastindex = event.docChanges.length - 1;
+                                while (n != 0) {
+                                  var p = event.docChanges[lastindex].doc;
+                                  recvmsgs.add(p.data());
+                                  DBhelper.insert(user['uid'] + "recv", {
+                                    'sentto': User.userid,
+                                    'time': p.data()?['time'].toString(),
+                                    'sentby': user['uid'],
+                                    'msgid': p.id,
+                                    'seen': 'TRUE',
+                                    'text': p.data()?['text']
+                                  });
+                                  n--;
+                                  lastindex--;
+                                }
                               }
-                            }
 
-                            if (event.docChanges.isNotEmpty &&
-                                isfirst() == false) {
-                              scrollcontroller.animateTo(
-                                  scrollcontroller.position.maxScrollExtent +
-                                      65,
-                                  duration: Duration(seconds: 2),
-                                  curve: Curves.easeInOut);
-                              var z = event.docChanges.toList();
-                              log("here is messages initially" +
-                                  recvmsgs.toString());
-                              recvmsgs += z.map((e) {
-                                DBhelper.insert(user['uid'] + "recv", {
-                                  'sentto': User.userid,
-                                  'time': e.doc.data()?['time'].toString(),
-                                  'sentby': user['uid'],
-                                  'msgid': e.doc.id,
-                                  'seen': 'TRUE',
-                                  'text': e.doc.data()?['text']
-                                });
-                                return e.doc.data();
-                              }).toList();
-                              // log("cheking db insert");
-                              // DBhelper.givemessages(user['uid']).then((value) {
-                              //   log(value.toString() + "value of db");
-                              //   value.forEach((element) {
-                              //     log(element.toString());
-                              //   });
-                              // });
-                            }
-                            z.setrecvmsgs(recvmsgs);
-                            z.setsentmsgs(sentmsgs);
-                            log("messages finally " + z.messages.toString());
-                          }),
-                        builder: (context, snap) {
-                          if (snap.connectionState == ConnectionState.waiting)
-                            return Center(child: CircularProgressIndicator());
-                          log(User.userid.toString());
+                              if (event.docChanges.isNotEmpty &&
+                                  isfirst() == false) {
+                                scrollcontroller.animateTo(
+                                    scrollcontroller.position.maxScrollExtent +
+                                        65,
+                                    duration: Duration(seconds: 2),
+                                    curve: Curves.easeInOut);
+                                var z = event.docChanges.toList();
+                                log("here is messages initially" +
+                                    recvmsgs.toString());
+                                recvmsgs += z.map((e) {
+                                  DBhelper.insert(user['uid'] + "recv", {
+                                    'sentto': User.userid,
+                                    'time': e.doc.data()?['time'].toString(),
+                                    'sentby': user['uid'],
+                                    'msgid': e.doc.id,
+                                    'seen': 'TRUE',
+                                    'text': e.doc.data()?['text']
+                                  });
+                                  return e.doc.data();
+                                }).toList();
+                                // log("cheking db insert");
+                                // DBhelper.givemessages(user['uid']).then((value) {
+                                //   log(value.toString() + "value of db");
+                                //   value.forEach((element) {
+                                //     log(element.toString());
+                                //   });
+                                // });
+                              }
+                              z.setrecvmsgs(recvmsgs);
+                              z.setsentmsgs(sentmsgs);
+                              log("messages finally " + z.messages.toString());
+                            }),
+                          builder: (context, snap) {
+                            if (snap.connectionState == ConnectionState.waiting)
+                              return Center(child: CircularProgressIndicator());
+                            log(User.userid.toString());
 
-                          return Consumer<UserMessages>(
-                              builder: (context, prod, child) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height - 50,
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: ListView.builder(
-                                      controller: scrollcontroller,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: MessageBubble(
-                                              prod.messages[index]["text"],
-                                              prod.messages[index]["sentby"] ==
-                                                  User.userid),
-                                        );
-                                      },
-                                      itemCount: prod.messages.length,
+                            return Consumer<UserMessages>(
+                                builder: (context, prod, child) {
+                              return Container(
+                                height: MediaQuery.of(context).size.height - 50,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ListView.builder(
+                                        controller: scrollcontroller,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: MessageBubble(
+                                                prod.messages[index]["text"],
+                                                prod.messages[index]
+                                                        ["sentby"] ==
+                                                    User.userid),
+                                          );
+                                        },
+                                        itemCount: prod.messages.length,
+                                      ),
                                     ),
-                                  ),
-                                  WriteBox(user)
-                                ],
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.max,
-                              ),
-                            );
-                          });
-                        }));
-              });
+                                    WriteBox(user)
+                                  ],
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.max,
+                                ),
+                              );
+                            });
+                          }));
+                });
+          } else
+            return Center(child: CircularProgressIndicator());
         });
   }
 }

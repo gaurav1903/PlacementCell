@@ -26,6 +26,7 @@ class DBhelper {
 
   static Future<List<Map<String, dynamic>>> givemessages(
       String tablename) async {
+    log("givemessages ran");
     sql.Database db = await DBhelper.intitialisedb();
     return await db.query(tablename, orderBy: "time");
   }
