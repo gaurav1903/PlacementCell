@@ -6,9 +6,9 @@ import 'package:path/path.dart' as path;
 class DBhelper {
   static Future<sql.Database> intitialisedb() async {
     String dbpath = await sql.getDatabasesPath();
-    final db =
-        await sql.openDatabase(path.join(dbpath, "usermessages.db".toString()));
-    // db.execute("DROP TABLE xzJxQe7ZusWwl8fu9Ei7EjpD7B73");
+    final db = await sql.openDatabase(
+        path.join(dbpath, "usermessages+${User.userid}.db".toString()));
+    // db.delete("hCjX8UMklSfohvjfFo97HXiCBah1recv");
     return db;
   }
 
@@ -19,7 +19,7 @@ class DBhelper {
 
     await db.execute("create table if not exists " +
         tablename +
-        "(msgid TEXT,sentby TEXT,sentto TEXT,text TEXT,time TEXT,seen BOOL)");
+        "(msgid TEXT,sentby TEXT,sentto TEXT,text TEXT,time BIGINT,seen BOOL)");
     db.insert(tablename, data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }

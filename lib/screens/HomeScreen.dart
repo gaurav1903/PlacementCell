@@ -21,17 +21,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int value = 0;
+  Future<dynamic> givealert() async {
+    BuildContext _context = context;
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (ctx) => AlertDialog(
+                title: Text("ALERT : Incomplete Details",
+                    style: TextStyle(color: Colors.red)),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        setState(() {
+                          value = 4;
+                        });
+                        Navigator.of(_context, rootNavigator: true).pop();
+                      },
+                      child: Text("Complete details"))
+                ]));
+  }
+
   Future<void> func() async {
     await FirebaseFirestore.instance
         .collection("users")
         .where("role", isEqualTo: "Student")
         .get()
-        .then((value) {
-      var z = value.docs;
+        .then((val) {
+      var z = val.docs;
       log("running z.docs");
       admin.User.setdata(z.firstWhere((element) {
         return element.data()['uid'].toString() == admin.User.userid.toString();
       }).data());
+      if (admin.User.batch == null) givealert();
+      //TODO::CHECK HERE AND RAISE AN ERROR BOX THAT NAVIGATES TO PROFILE PAGE
       users.setl(z.toList());
       users.setpartialdata(z.toList());
     });
@@ -53,7 +75,10 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
                 bottomNavigationBar: BottomNavigationBar(
                     onTap: (val) {
-                      // log(val.toString());
+                      // if (value == 4 && admin.User.batch == null) {//TODO::ON THESE LINES ,JUST TURNED OFF FOR TESTING
+                      //   givealert();
+                      //   return;
+                      // }
                       setState(() {
                         value = val;
                       });

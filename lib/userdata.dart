@@ -32,6 +32,7 @@ class User {
     // complete = userdata['complete'];
     username = userdata['username'];
     batch = userdata['batch'];
+    log(batch.toString() + " batch");
     var temp = userdata['mode'];
     domain = userdata['domain'];
     // log("Data fetching is done" + username.toString());

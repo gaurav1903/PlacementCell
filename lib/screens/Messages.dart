@@ -131,7 +131,8 @@ class _MessagesState extends State<Messages> {
                                   recvmsgs.add(p.data());
                                   DBhelper.insert(user['uid'] + "recv", {
                                     'sentto': User.userid,
-                                    'time': p.data()?['time'].toString(),
+                                    'time': (p.data()?['time'] as Timestamp)
+                                        .millisecondsSinceEpoch,
                                     'sentby': user['uid'],
                                     'msgid': p.id,
                                     'seen': 'TRUE',
@@ -163,7 +164,8 @@ class _MessagesState extends State<Messages> {
                                 recvmsgs += x.map((e) {
                                   DBhelper.insert(user['uid'] + "recv", {
                                     'sentto': User.userid,
-                                    'time': e.doc.data()?['time'].toString(),
+                                    'time': (e.doc.data()?['time'] as Timestamp)
+                                        .millisecondsSinceEpoch,
                                     'sentby': user['uid'],
                                     'msgid': e.doc.id,
                                     'seen': 'TRUE',
@@ -214,7 +216,7 @@ class _MessagesState extends State<Messages> {
                                         itemCount: prod.messages.length,
                                       ),
                                     ),
-                                    WriteBox(user)
+                                    WriteBox(user, scrollcontroller)
                                   ],
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   mainAxisSize: MainAxisSize.max,
@@ -268,7 +270,8 @@ class WriteBox extends StatefulWidget {
   var user;
   TextEditingController controller = TextEditingController();
   // UserMessages msgs;
-  WriteBox(this.user);
+  ScrollController _scrollController;
+  WriteBox(this.user, this._scrollController);
   @override
   _WriteBoxState createState() => _WriteBoxState();
 }
@@ -318,7 +321,7 @@ class _WriteBoxState extends State<WriteBox> {
               }).then((value) {
                 DBhelper.insert(widget.user['uid'] + "sent", {
                   'sentto': widget.user['uid'],
-                  'time': Timestamp.now().toString(),
+                  'time': Timestamp.now().millisecondsSinceEpoch,
                   'sentby': User.userid,
                   'msgid': value.id,
                   'seen': 'TRUE',
@@ -332,12 +335,15 @@ class _WriteBoxState extends State<WriteBox> {
                       'sentto': widget.user['uid'],
                       "sentby": User.userid,
                       "text": text,
-                      "time": Timestamp.now(),
+                      "time": Timestamp.now().millisecondsSinceEpoch,
                       "username": User.username,
                     }
                   ]);
               FocusScope.of(context).unfocus();
-
+              widget._scrollController.animateTo(
+                  widget._scrollController.position.maxScrollExtent + 65,
+                  duration: Duration(seconds: 1),
+                  curve: Curves.easeInOut);
               //TODO:: ADD IN SHARED PREFERENCE
               //TODO::ADD TO SCREEN
             },

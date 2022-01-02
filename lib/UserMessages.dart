@@ -11,11 +11,13 @@ class UserMessages with ChangeNotifier {
   List sentmsgs = [];
 
   void setrecvmsgs(List x) {
+    log("setrecvmsgs ran");
     recvmsgs = x;
     setmessages(recvmsgs, sentmsgs);
   }
 
   void setsentmsgs(List y) {
+    log("setsentmsgs ran");
     sentmsgs = y;
     setmessages(recvmsgs, sentmsgs);
   }
@@ -25,7 +27,10 @@ class UserMessages with ChangeNotifier {
     log("set messages ran");
     messages = (recvmsgs + sentmsgs)
       ..sort((a, b) {
-        if (a['time'].toString().compareTo(b['time'].toString()) < 0) return 0;
+        if (int.parse(a['time'].toString()) < int.parse(b['time'].toString())) {
+          // log(a['time'].toString() + " <" + b['time'].toString());
+          return 0;
+        }
         return 1;
       }); //returns true means a can be put before b
     log("messages length " + messages.length.toString());
