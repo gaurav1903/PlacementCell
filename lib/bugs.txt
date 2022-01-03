@@ -1,2 +1,5 @@
 Current bugs
-1) currently messages are showing twice
+1) check chatting properly
+2) on profile page while setting data it just keeps on loading
+3)on profile page data must be made temporary
+

@@ -27,7 +27,7 @@ class UserMessages with ChangeNotifier {
     log("set messages ran");
     messages = (recvmsgs + sentmsgs)
       ..sort((a, b) {
-        if (int.parse(a['time'].toString()) < int.parse(b['time'].toString())) {
+        if (a['time'] < b['time']) {
           // log(a['time'].toString() + " <" + b['time'].toString());
           return 0;
         }

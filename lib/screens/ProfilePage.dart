@@ -41,12 +41,14 @@ class _ProfilePageState extends State<ProfilePage> {
         .ref("User")
         .child(User().uid)
         .child(" resume.pdf");
-    await ref1
-        .putFile(File((PickedImage as XFile).path))
-        .then((imageresult) async {
-      imageurl = await ref1.getDownloadURL();
-    });
-    var path = (resume as FilePickerResult).paths[0];
+    if (PickedImage != null)
+      await ref1
+          .putFile(File((PickedImage as XFile).path))
+          .then((imageresult) async {
+        imageurl = await ref1.getDownloadURL();
+      });
+    var path = null;
+    if (resume != null) path = (resume as FilePickerResult).paths[0];
     List l = [];
     if (!skill1.startsWith("Choose")) l.add(skill1);
     if (!skill2.startsWith("Choose")) l.add(skill2);

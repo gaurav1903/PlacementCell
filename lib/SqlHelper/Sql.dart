@@ -6,6 +6,8 @@ import 'package:path/path.dart' as path;
 class DBhelper {
   static Future<sql.Database> intitialisedb() async {
     String dbpath = await sql.getDatabasesPath();
+    // sql.deleteDatabase(
+    //     path.join(dbpath, "usermessages+${User.userid}.db".toString()));
     final db = await sql.openDatabase(
         path.join(dbpath, "usermessages+${User.userid}.db".toString()));
     // db.delete("hCjX8UMklSfohvjfFo97HXiCBah1recv");

@@ -128,7 +128,13 @@ class _MessagesState extends State<Messages> {
                                 int lastindex = event.docChanges.length - 1;
                                 while (n != 0) {
                                   var p = event.docChanges[lastindex].doc;
-                                  recvmsgs.add(p.data());
+                                  recvmsgs.add({
+                                    'sentby': user['uid'],
+                                    'text': p.data()?['text'],
+                                    'time': (p.data()?['time'] as Timestamp)
+                                        .millisecondsSinceEpoch,
+                                    'username': user['username']
+                                  });
                                   DBhelper.insert(user['uid'] + "recv", {
                                     'sentto': User.userid,
                                     'time': (p.data()?['time'] as Timestamp)
@@ -142,13 +148,6 @@ class _MessagesState extends State<Messages> {
                                   lastindex--;
                                 }
                                 log("cheking db insert");
-                                DBhelper.givemessages(user['uid'] + "recv")
-                                    .then((value) {
-                                  log(value.length.toString() + "value of db");
-                                  value.forEach((element) {
-                                    log(element.toString());
-                                  });
-                                });
                               }
 
                               if (event.docChanges.isNotEmpty &&
@@ -156,7 +155,7 @@ class _MessagesState extends State<Messages> {
                                 scrollcontroller.animateTo(
                                     scrollcontroller.position.maxScrollExtent +
                                         65,
-                                    duration: Duration(seconds: 2),
+                                    duration: Duration(seconds: 1),
                                     curve: Curves.easeInOut);
                                 var x = event.docChanges.toList();
                                 log("here is messages initially" +
@@ -171,16 +170,23 @@ class _MessagesState extends State<Messages> {
                                     'seen': 'TRUE',
                                     'text': e.doc.data()?['text']
                                   });
-                                  return e.doc.data();
+                                  return {
+                                    'sentby': user['uid'],
+                                    'text': e.doc.data()?['text'],
+                                    'time': (e.doc.data()?['time'] as Timestamp)
+                                        .millisecondsSinceEpoch,
+                                    'username': user['username']
+                                  };
                                 }).toList();
                                 log("cheking db insert");
-                                DBhelper.givemessages(user['uid'] + "recv")
-                                    .then((value) {
-                                  log(value.length.toString() + "value of db");
-                                  value.forEach((element) {
-                                    log(element.toString());
-                                  });
-                                });
+                                // DBhelper.givemessages(user['uid'] + "recv")
+                                //     .then((value) {
+                                //   log(value.length.toString() +
+                                //       "value of db");
+                                //   value.forEach((element) {
+                                //     log(element.toString());
+                                //   });
+                                // });
                                 sentmsgs =
                                     z.sentmsgs; //TODO:: JUST TO HAVE IT IN SYNC
                               }
@@ -308,6 +314,7 @@ class _WriteBoxState extends State<WriteBox> {
         ),
         IconButton(
             onPressed: () {
+              Timestamp t = Timestamp.now();
               //ADD TO SHARED PREFERENCE
               FirebaseFirestore.instance
                   .collection("chats")
@@ -316,12 +323,12 @@ class _WriteBoxState extends State<WriteBox> {
                   .add({
                 "text": text,
                 "sentby": User.userid,
-                "time": Timestamp.now(),
+                "time": t,
                 "username": User.username,
               }).then((value) {
                 DBhelper.insert(widget.user['uid'] + "sent", {
                   'sentto': widget.user['uid'],
-                  'time': Timestamp.now().millisecondsSinceEpoch,
+                  'time': t.millisecondsSinceEpoch,
                   'sentby': User.userid,
                   'msgid': value.id,
                   'seen': 'TRUE',
@@ -335,7 +342,7 @@ class _WriteBoxState extends State<WriteBox> {
                       'sentto': widget.user['uid'],
                       "sentby": User.userid,
                       "text": text,
-                      "time": Timestamp.now().millisecondsSinceEpoch,
+                      "time": t.millisecondsSinceEpoch,
                       "username": User.username,
                     }
                   ]);
