@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:placement_cell/userdata.dart';
+import 'package:email_auth/email_auth.dart';
 
 class AuthForm extends StatefulWidget {
   var isloading;
@@ -18,8 +19,19 @@ class _AuthFormState extends State<AuthForm> {
   String _useremail = '';
   String _username = '';
   String _userpassword = '';
+  bool otploading = false;
   var _islogin = true;
   var mode = null;
+  var emailAuth;
+  @override
+  void initState() {
+    emailAuth = new EmailAuth(
+      sessionName: "PlacementApp",
+    );
+    super.initState();
+  }
+
+  TextEditingController _otp = TextEditingController();
   void _submit() {
     var status = _formkey.currentState;
     // log("status " + status.toString());
@@ -29,6 +41,7 @@ class _AuthFormState extends State<AuthForm> {
 
     if (isvalid == true) {
       _formkey.currentState?.save();
+
       log(_useremail + " " + _userpassword);
       if (mode == null) mode = Mode.Student;
       widget.saveauthform(_useremail, _username, _userpassword, _islogin, mode);
@@ -72,7 +85,7 @@ class _AuthFormState extends State<AuthForm> {
                               !value.contains('@')) return "invalid email";
                           return null;
                         },
-                        onSaved: (val) {
+                        onChanged: (val) {
                           if (val != null) _useremail = val;
                         },
                         keyboardType: TextInputType.emailAddress,
@@ -152,6 +165,45 @@ class _AuthFormState extends State<AuthForm> {
                                 },
                               )
                             ]),
+                      //TODO::aDD HERE EMAIL VERIFICATION
+                      SizedBox(height: 10),
+                      if (_islogin == false)
+                        Column(children: [
+                          if (otploading == false)
+                            TextButton(
+                                onPressed: () async {
+                                  if (_useremail.isNotEmpty) {
+                                    setState(() {
+                                      otploading = true;
+                                    });
+                                    bool result = await emailAuth.sendOtp(
+                                        recipientMail: _useremail,
+                                        otpLength: 6);
+                                    if (result == true)
+                                      setState(() {
+                                        otploading = false;
+                                      });
+                                  }
+                                },
+                                child: Text("Request OTP")),
+                          if (otploading == true)
+                            Center(child: CircularProgressIndicator()),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: TextFormField(
+                              validator: (val) {
+                                if ((emailAuth as EmailAuth).validateOtp(
+                                        recipientMail: _useremail,
+                                        userOtp: _otp.value.text) ==
+                                    false) return "wrong OTP";
+                              },
+                              controller: _otp,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  helperText: "Enter OTP sent at the email"),
+                            ),
+                          ),
+                        ]),
                       if (widget.isloading == true)
                         Center(child: CircularProgressIndicator())
                       else

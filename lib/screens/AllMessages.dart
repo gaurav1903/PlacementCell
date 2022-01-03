@@ -4,6 +4,9 @@ import 'package:placement_cell/userdata.dart';
 import '../widgets/full_userdata.dart' as Allusers;
 import 'dart:developer';
 
+//WHAT TO DO->
+//WE WILL MANTAIN ALL RECIEVEDD MESSAGES IN A TABLE THEN WE WILL RETRIEVE THIS TABLE AND make a list that will order them accordingly
+//TODO:: A LOT OF OPTIMISATION FOR THIS PAGE AND LAY THE RULES AS WELL
 class AllMessages extends StatefulWidget {
   const AllMessages({Key? key}) : super(key: key);
 
@@ -13,6 +16,8 @@ class AllMessages extends StatefulWidget {
 
 //TODO;;SHOW ALL CONTACTS HERE AND SHOW THOSE ON TOP WHO HAVE SENT MESSGAGES THATS UNSEEN
 class _AllMessagesState extends State<AllMessages> {
+  List order = []; //should contain only uid
+  Set<String> done = {};
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -25,25 +30,42 @@ class _AllMessagesState extends State<AllMessages> {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
+          log(z.length.toString());
+          for (int i = 0; i < z.length; i++) {
+            if (done.contains(z[i].data()['sentby']) == false) {
+              order.add(z[i].data()['sentby']);
+              done.add(z[i].data()['sentby']);
+            }
+          }
+          for (int i = 0; i < Allusers.l.length; i++) {
+            if (done.contains(Allusers.l[i]['uid']) == false) {
+              order.add(Allusers.l[i]['uid']);
+              done.add(Allusers.l[i]['uid']);
+            }
+          }
+          log(order.toString() + " orderrrrrrrrrrrrrrrrrrrrrrr");
           return ListView.builder(
             itemBuilder: (ctx, index) {
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context).pushNamed("message_screen",
                       arguments: Allusers.l.firstWhere((element) {
-                    return element["uid"] == z[index]["sentby"];
+                    return element['uid'] == order[index];
                   }));
                 },
                 child: ListTile(
                   tileColor: Colors.grey,
                   leading: CircleAvatar(child: Icon(Icons.person)),
-                  title: Text(z[index]['username'].toString(),
+                  title: Text(
+                      Allusers.l.firstWhere((e) {
+                        return e['uid'] == order[index];
+                      })['username'].toString(),
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
                 ),
               );
             },
-            itemCount: z.length,
+            itemCount: order.length,
           );
         });
   }
