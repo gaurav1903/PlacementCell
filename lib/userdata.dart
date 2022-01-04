@@ -9,7 +9,12 @@ class User {
   final z = FirebaseAuth.instance.currentUser;
   static final userid = FirebaseAuth.instance.currentUser?.uid;
   static var complete;
-  static var username, batch, mode, domain;
+  static var username,
+      batch,
+      mode,
+      domain,
+      bio,
+      company; //company for both placement officer and for recruiter
   bool get completeness {
     return complete;
   }
@@ -32,7 +37,8 @@ class User {
     // complete = userdata['complete'];
     username = userdata['username'];
     batch = userdata['batch'];
-    log(batch.toString() + " batch");
+    bio = userdata['bio'];
+    company = userdata['company'];
     var temp = userdata['mode'];
     domain = userdata['domain'];
     // log("Data fetching is done" + username.toString());

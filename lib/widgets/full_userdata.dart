@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-List l = []; //all users//should be actually a map uid to data ,do that
-List partial = [];
+List l = []; //all users//is a list of queerysnapshots
+List partial = []; //same for this
 void setl(List data) {
   l = data;
 }

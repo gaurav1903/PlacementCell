@@ -140,6 +140,7 @@ class _AuthFormState extends State<AuthForm> {
                                 child: Text('Student'),
                                 onTap: () {
                                   setState(() {
+                                    User.mode = Mode.Student;
                                     mode = Mode.Student;
                                   });
                                 },
@@ -150,6 +151,7 @@ class _AuthFormState extends State<AuthForm> {
                                 value: Mode.Recruiter,
                                 onTap: () {
                                   setState(() {
+                                    User.mode = Mode.Recruiter;
                                     mode = Mode.Recruiter;
                                   });
                                 },
@@ -160,6 +162,7 @@ class _AuthFormState extends State<AuthForm> {
                                 value: Mode.PlacementOfficer,
                                 onTap: () {
                                   setState(() {
+                                    User.mode = Mode.PlacementOfficer;
                                     mode = Mode.PlacementOfficer;
                                   });
                                 },

@@ -46,15 +46,26 @@ class _AuthScreenState extends State<AuthScreen> {
           m = "PlacementOfficer";
         else
           m = "Student";
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(auth.currentUser?.uid)
-            .set({
-          'username': username,
-          'email': email,
-          'role': m,
-          "uid": auth.currentUser?.uid
-        });
+        if (m == "Student")
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(auth.currentUser?.uid)
+              .set({
+            'username': username,
+            'email': email,
+            'role': m,
+            "uid": auth.currentUser?.uid
+          });
+        else
+          FirebaseFirestore.instance
+              .collection('officials')
+              .doc(auth.currentUser?.uid)
+              .set({
+            'username': username,
+            'email': email,
+            'role': m,
+            "uid": auth.currentUser?.uid
+          });
       }
     } on PlatformException catch (err) {
       var mess = "Please check credentials";

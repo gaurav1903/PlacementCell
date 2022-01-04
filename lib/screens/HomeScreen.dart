@@ -5,6 +5,7 @@ import 'package:placement_cell/UserMessages.dart';
 import 'package:placement_cell/screens/AllMessages.dart';
 import 'package:placement_cell/screens/DashBoard.dart';
 import 'package:placement_cell/screens/IntroPage.dart';
+import 'package:placement_cell/screens/OfficialProfileScreen.dart';
 import 'package:provider/provider.dart';
 import '../screens/ProfilePage.dart';
 import '../screens/SearchPage.dart';
@@ -42,21 +43,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> func() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .where("role", isEqualTo: "Student")
-        .get()
-        .then((val) {
-      var z = val.docs;
-      log("running z.docs");
-      admin.User.setdata(z.firstWhere((element) {
-        return element.data()['uid'].toString() == admin.User.userid.toString();
-      }).data());
-      if (admin.User.batch == null) givealert();
-      //TODO::CHECK HERE AND RAISE AN ERROR BOX THAT NAVIGATES TO PROFILE PAGE
-      users.setl(z.toList());
-      users.setpartialdata(z.toList());
-    });
+    if (admin.User.mode == admin.Mode.Student) {
+      await FirebaseFirestore.instance
+          .collection("officials")
+          .get()
+          .then((val) {
+        var z = val.docs;
+        users.setl(z.toList());
+        users.setpartialdata(z.toList());
+        log("running z.docs");
+      });
+      await FirebaseFirestore.instance
+          .collection("users")
+          .where("uid", isEqualTo: admin.User.userid)
+          .get()
+          .then((value) {
+        var z = value.docs[0].data();
+        admin.User.setdata(z);
+        if (admin.User.batch == null) givealert();
+      });
+    } else {
+      log("offcial mode ");
+      await FirebaseFirestore.instance.collection("users").get().then((val) {
+        var z = val.docs;
+        users.setl(z.toList());
+        users.setpartialdata(z.toList());
+      });
+      await FirebaseFirestore.instance
+          .collection("officials")
+          .where("uid", isEqualTo: admin.User.userid)
+          .get()
+          .then((value) {
+        var z = value.docs[0].data();
+        admin.User.setdata(z);
+        log("setting data called on homescreen");
+        if (admin.User.company == null) givealert();
+      });
+    }
   }
 
   Future f = Future.value();
@@ -75,10 +98,17 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
                 bottomNavigationBar: BottomNavigationBar(
                     onTap: (val) {
-                      // if (value == 4 && admin.User.batch == null) {//TODO::ON THESE LINES ,JUST TURNED OFF FOR TESTING
-                      //   givealert();
-                      //   return;
-                      // }
+                      if (admin.User.mode == admin.Mode.Student) {
+                        if (value == 4 && admin.User.batch == null) {
+                          givealert();
+                          return;
+                        }
+                      } else {
+                        if (value == 4 && admin.User.company == null) {
+                          givealert();
+                          return;
+                        }
+                      }
                       setState(() {
                         value = val;
                       });
@@ -122,7 +152,9 @@ class _HomePageState extends State<HomePage> {
                             ? SearchPage()
                             : value == 3
                                 ? AllMessages()
-                                : ProfilePage(""));
+                                : (admin.User.mode == admin.Mode.Student)
+                                    ? ProfilePage("")
+                                    : OfficialProfileScreen());
           else
             return Center(child: CircularProgressIndicator());
         });
