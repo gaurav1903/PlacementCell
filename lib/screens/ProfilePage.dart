@@ -163,8 +163,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: MediaQuery.of(context).size.width,
                           child: GestureDetector(
                             child: PickedImage == null
-                                ? Image.asset('assets/selectImage.jpg',
-                                    fit: BoxFit.fitWidth)
+                                ? User.imageurl != null &&
+                                        User.imageurl.toString().isNotEmpty
+                                    ? Image.network(User.imageurl)
+                                    : Image.asset('assets/selectImage.jpg',
+                                        fit: BoxFit.fitWidth)
                                 : Image.file(File((PickedImage as XFile).path),
                                     width: MediaQuery.of(context).size.width,
                                     fit: BoxFit.fitWidth),

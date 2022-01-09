@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:placement_cell/widgets/InputForm.dart';
 import 'dart:developer';
 import '../widgets/MessageBubble.dart';
+import 'package:placement_cell/userdata.dart';
 
 class DashBoard extends StatelessWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -27,23 +28,24 @@ class DashBoard extends StatelessWidget {
                           z.docs[index]['url'], z.docs[index]['username']);
                     },
                     itemCount: z.docs.length),
-                Positioned(
-                  bottom: 10,
-                  right: 10,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return AlertDialog(
-                              title: Text('Write Post'),
-                              content: InputForm(),
-                            );
-                          });
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                )
+                if (User.mode != Mode.Student)
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                title: Text('Write Post'),
+                                content: InputForm(),
+                              );
+                            });
+                      },
+                      child: Icon(Icons.add),
+                    ),
+                  )
               ]),
             );
           }

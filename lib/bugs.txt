@@ -1,6 +1,56 @@
 Current bugs
-1) check chatting properly
-2) on profile page while setting data it just keeps on loading
 3)on profile page data must be made temporary
-4)check otp part on auth screen correctly
+4)when click on request otp the data disappears
+5)TODO::REMOVE LOGOUT FUNCTIONALITY PERMANENTLY
+6)TODO::input validation
+7)TODO::single user page
+8)TODO::LOGIN/LOGOUT TEST AGAIN
 
+
+
+ if (admin.User.mode == admin.Mode.Student) {
+      await FirebaseFirestore.instance
+          .collection("officials")
+          .get()
+          .then((val) {
+        var z = val.docs;
+        List temp = [];
+        z.forEach((element) {
+          if (element.data().containsKey("company")) temp.add(element.data());
+        });
+        users.setl(temp);
+        users.setpartialdata(temp);
+        log("running z.docs");
+      });
+      // await FirebaseFirestore.instance
+      //     .collection("users")
+      //     .where("uid", isEqualTo: admin.User.userid)
+      //     .get()
+      //     .then((value) {
+      //   var z = value.docs[0].data();
+      //   admin.User.setdata(z);
+      //   if (admin.User.batch == null) givealert();
+      // });
+    } else {
+      log("offcial mode ");
+      await FirebaseFirestore.instance.collection("users").get().then((val) {
+        var z = val.docs;
+        List temp = [];
+        z.forEach((element) {
+          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
+            temp.add(element.data());
+        });
+        users.setl(temp);
+        users.setpartialdata(temp);
+        log("running z.docs");
+      });
+      // await FirebaseFirestore.instance
+      //     .collection("officials")
+      //     .where("uid", isEqualTo: admin.User.userid)
+      //     .get()
+      //     .then((value) {
+      //   var z = value.docs[0].data();
+      //   admin.User.setdata(z);
+      //   log("setting data called on homescreen");
+      //   if (admin.User.company == null) givealert();
+      // });}

@@ -8,17 +8,13 @@ enum Mode { Student, PlacementOfficer, Recruiter }
 class User {
   final z = FirebaseAuth.instance.currentUser;
   static final userid = FirebaseAuth.instance.currentUser?.uid;
-  static var complete;
   static var username,
       batch,
       mode,
       domain,
       bio,
+      imageurl,
       company; //company for both placement officer and for recruiter
-  bool get completeness {
-    return complete;
-  }
-
   String get uid {
     if (userid == null)
       return "";
@@ -37,11 +33,13 @@ class User {
     // complete = userdata['complete'];
     username = userdata['username'];
     batch = userdata['batch'];
+    imageurl = userdata['imageurl'];
     bio = userdata['bio'];
     company = userdata['company'];
-    var temp = userdata['mode'];
+    var temp = userdata['role'];
     domain = userdata['domain'];
     // log("Data fetching is done" + username.toString());
+    log("temp   " + temp.toString());
     if (temp == 'Student')
       mode = Mode.Student;
     else if (temp == 'Recruiter')

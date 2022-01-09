@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:placement_cell/userdata.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:developer';
 import 'dart:io';
 
 class OfficialProfileScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
   String company = "";
   Future<void> _submit() async {
     String imageurl = "";
+
+    key.currentState?.validate();
     key.currentState?.save();
     final ref1 = FirebaseStorage.instance
         .ref("User")
@@ -30,7 +33,7 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
           .then((imageresult) async {
         imageurl = await ref1.getDownloadURL();
       });
-    FirebaseFirestore.instance.collection("officials").doc(User.userid).update({
+    FirebaseFirestore.instance.collection("users").doc(User.userid).update({
       "imageurl": imageurl,
       'bio': bio,
       'company': company
@@ -43,6 +46,7 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
   final key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    log(User.mode.toString() + "       mode");
     return (isloading == true)
         ? Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
@@ -53,8 +57,11 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
                   width: MediaQuery.of(context).size.width,
                   child: GestureDetector(
                     child: PickedImage == null
-                        ? Image.asset('assets/selectImage.jpg',
-                            fit: BoxFit.fitWidth)
+                        ? User.imageurl != null &&
+                                User.imageurl.toString().isNotEmpty
+                            ? Image.network(User.imageurl)
+                            : Image.asset('assets/selectImage.jpg',
+                                fit: BoxFit.fitWidth)
                         : Image.file(File((PickedImage as XFile).path),
                             width: MediaQuery.of(context).size.width,
                             fit: BoxFit.fitWidth),
@@ -76,18 +83,32 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
                     child: Column(children: [
                       Text('BIO'),
                       TextFormField(
+                        initialValue: User.bio,
                         maxLines: 20,
                         minLines: 1,
                         decoration: InputDecoration(helperText: "BIO"),
                       ),
                       SizedBox(height: 50),
-                      Text("Company"),
+                      User.mode == Mode.Recruiter
+                          ? Text("Company")
+                          : Text("College Name"),
                       TextFormField(
                         maxLines: 1,
+                        initialValue: User.company == null
+                            ? null
+                            : User.company.toString(),
+                        validator: (val) {
+                          if (val == null || val.isEmpty)
+                            return "Can't be Empty";
+                          return null;
+                        },
                         onSaved: (val) {
                           company = val.toString();
                         },
-                        decoration: InputDecoration(helperText: "Company"),
+                        decoration: InputDecoration(
+                            helperText: User.mode == Mode.Recruiter
+                                ? "Company"
+                                : "College Name"),
                       )
                     ]),
                   ),

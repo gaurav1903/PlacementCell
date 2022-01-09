@@ -168,7 +168,6 @@ class _AuthFormState extends State<AuthForm> {
                                 },
                               )
                             ]),
-                      //TODO::aDD HERE EMAIL VERIFICATION
                       SizedBox(height: 10),
                       if (_islogin == false)
                         Column(children: [

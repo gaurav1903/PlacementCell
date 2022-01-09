@@ -21,10 +21,6 @@ class _SearchPageState extends State<SearchPage> {
   bool val = false;
   List data = Userdata.l;
   final k = GlobalKey<FormState>();
-  @override
-  void initState() {
-    super.initState();
-  }
 
   List domains = [], skills = [];
   void _submit() {
@@ -50,6 +46,7 @@ class _SearchPageState extends State<SearchPage> {
         .then((value) {
       skills = value.data()?['skills'].toList();
     });
+    log(data.length.toString() + "data len on search page");
     // return await FirebaseFirestore.instance.collection('users').get();
   }
 
@@ -120,23 +117,23 @@ class _SearchPageState extends State<SearchPage> {
                         )
                       ]),
                   SizedBox(width: 30),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(
-                          "Open Source",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                        Switch(
-                            value: val,
-                            onChanged: (b) {
-                              setState(() {
-                                val = !val;
-                              });
-                            })
-                      ])
+                  // Column(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     mainAxisSize: MainAxisSize.max,
+                  //     children: [
+                  //       Text(
+                  //         "Open Source",
+                  //         style: TextStyle(
+                  //             fontWeight: FontWeight.bold, fontSize: 15),
+                  //       ),
+                  //       Switch(
+                  //           value: val,
+                  //           onChanged: (b) {
+                  //             setState(() {
+                  //               val = !val;
+                  //             });
+                  //           })
+                  //     ])
                 ]),
                 if (s == "Name" || s == "CGPA")
                   Row(children: [

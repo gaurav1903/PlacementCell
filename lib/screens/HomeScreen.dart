@@ -12,6 +12,7 @@ import '../screens/SearchPage.dart';
 import 'dart:developer';
 import 'package:placement_cell/userdata.dart' as admin;
 import '../widgets/full_userdata.dart' as users;
+import '../screens/UserSearchPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -43,43 +44,69 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> func() async {
-    if (admin.User.mode == admin.Mode.Student) {
-      await FirebaseFirestore.instance
-          .collection("officials")
-          .get()
-          .then((val) {
-        var z = val.docs;
-        users.setl(z.toList());
-        users.setpartialdata(z.toList());
-        log("running z.docs");
-      });
-      await FirebaseFirestore.instance
-          .collection("users")
-          .where("uid", isEqualTo: admin.User.userid)
-          .get()
-          .then((value) {
-        var z = value.docs[0].data();
-        admin.User.setdata(z);
-        if (admin.User.batch == null) givealert();
-      });
-    } else {
-      log("offcial mode ");
-      await FirebaseFirestore.instance.collection("users").get().then((val) {
-        var z = val.docs;
-        users.setl(z.toList());
-        users.setpartialdata(z.toList());
-      });
-      await FirebaseFirestore.instance
-          .collection("officials")
-          .where("uid", isEqualTo: admin.User.userid)
-          .get()
-          .then((value) {
-        var z = value.docs[0].data();
-        admin.User.setdata(z);
-        log("setting data called on homescreen");
-        if (admin.User.company == null) givealert();
-      });
-    }
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("uid", isEqualTo: admin.User.userid)
+        .get()
+        .then((value) {
+      var z = value.docs[0].data();
+      admin.User.setdata(z);
+    }).then((value) {
+      log(admin.User.mode.toString() + " mode at home page");
+      if (admin.User.mode == admin.Mode.Student &&
+          admin.User.batch.toString().isEmpty)
+        givealert();
+      else if (admin.User.mode != admin.Mode.Student &&
+          admin.User.company.toString().isEmpty) givealert();
+    });
+    //DO THIS PART ON SEARCH PAGE OR MESSGAGE PAGE
+    // if (admin.User.mode == admin.Mode.Student) {
+    //   await FirebaseFirestore.instance
+    //       .collection("officials")
+    //       .get()
+    //       .then((val) {
+    //     var z = val.docs;
+    //     List temp = [];
+    //     z.forEach((element) {
+    //       if (element.data().containsKey("company")) temp.add(element.data());
+    //     });
+    //     users.setl(temp);
+    //     users.setpartialdata(temp);
+    //     log("running z.docs");
+    //   });
+    //   // await FirebaseFirestore.instance
+    //   //     .collection("users")
+    //   //     .where("uid", isEqualTo: admin.User.userid)
+    //   //     .get()
+    //   //     .then((value) {
+    //   //   var z = value.docs[0].data();
+    //   //   admin.User.setdata(z);
+    //   //   if (admin.User.batch == null) givealert();
+    //   // });
+    // } else {
+    //   log("offcial mode ");
+    //   await FirebaseFirestore.instance.collection("users").get().then((val) {
+    //     var z = val.docs;
+    //     List temp = [];
+    //     z.forEach((element) {
+    //       if ((element.data() as Map<String, dynamic>).containsKey("batch"))
+    //         temp.add(element.data());
+    //     });
+    //     users.setl(temp);
+    //     users.setpartialdata(temp);
+    //     log("running z.docs");
+    //   });
+    //   // await FirebaseFirestore.instance
+    //   //     .collection("officials")
+    //   //     .where("uid", isEqualTo: admin.User.userid)
+    //   //     .get()
+    //   //     .then((value) {
+    //   //   var z = value.docs[0].data();
+    //   //   admin.User.setdata(z);
+    //   //   log("setting data called on homescreen");
+    //   //   if (admin.User.company == null) givealert();
+    //   // });
+    // }
   }
 
   Future f = Future.value();
@@ -149,7 +176,9 @@ class _HomePageState extends State<HomePage> {
                     : value == 1
                         ? DashBoard()
                         : value == 2
-                            ? SearchPage()
+                            ? (admin.User.mode == admin.Mode.Student)
+                                ? UserSearchPage()
+                                : SearchPage()
                             : value == 3
                                 ? AllMessages()
                                 : (admin.User.mode == admin.Mode.Student)
