@@ -1,63 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:placement_cell/userdata.dart';
 import '../widgets/full_userdata.dart ' as Users;
 
-class UserSearchPage extends StatelessWidget {
+class UserSearchPage extends StatefulWidget {
   const UserSearchPage({Key? key}) : super(key: key);
+
+  @override
+  State<UserSearchPage> createState() => _UserSearchPageState();
+}
+
+class _UserSearchPageState extends State<UserSearchPage> {
+  Future f = Future.value();
+  Future<void> func() async {
+    if (Users.l.isEmpty)
+      FirebaseFirestore.instance
+          .collection("users")
+          .where("role", isNotEqualTo: "Student")
+          .get()
+          .then((val) {
+        var z = val.docs;
+        List temp = [];
+        z.forEach((element) {
+          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
+            temp.add(element.data());
+        });
+        Users.setl(temp);
+        Users.setpartialdata(temp);
+      });
+    if (Users.companies.isEmpty)
+      FirebaseFirestore.instance
+          .collection("companies")
+          .doc("VDvuRfstvofStGSeVVhZ")
+          .get()
+          .then((value) {
+        Users.setcompanies(value.data()?['allcompanies']);
+      });
+    return;
+  }
+
+  @override
+  void initState() {
+    f = func();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Users.l.isEmpty
-        ? FutureBuilder(
-            future: FirebaseFirestore.instance
-                .collection("users")
-                .get()
-                .then((val) {
-              var z = val.docs;
-              List temp = [];
-              z.forEach((element) {
-                if ((element.data() as Map<String, dynamic>)
-                    .containsKey("batch")) temp.add(element.data());
-              });
-              Users.setl(temp);
-              Users.setpartialdata(temp);
-            }),
-            builder: (ctx, snap) {
-              if (snap.connectionState != ConnectionState.done)
-                return Center(child: CircularProgressIndicator());
-              else
-                return Users.companies.isNotEmpty
-                    ? UserSearchWidget()
-                    : FutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection("companies")
-                            .doc("VDvuRfstvofStGSeVVhZ")
-                            .get()
-                            .then((value) {
-                          Users.setcompanies(value.data()?['allcompanies']);
-                        }),
-                        builder: (context, snap) {
-                          if (snap.connectionState == ConnectionState.done)
-                            return UserSearchWidget();
-                          else
-                            return Center(child: CircularProgressIndicator());
-                        });
-            })
-        : Users.companies.isNotEmpty
-            ? UserSearchWidget()
-            : FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection("companies")
-                    .doc("VDvuRfstvofStGSeVVhZ")
-                    .get()
-                    .then((value) {
-                  Users.setcompanies(value.data()?['allcompanies']);
-                }),
-                builder: (context, snap) {
-                  if (snap.connectionState == ConnectionState.done)
-                    return UserSearchWidget();
-                  else
-                    return Center(child: CircularProgressIndicator());
-                });
+    return FutureBuilder(
+        future: f,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.done)
+            return UserSearchWidget();
+          else
+            return Center(child: CircularProgressIndicator());
+        });
   }
 }
 
@@ -72,7 +69,6 @@ class _UserSearchWidgetState extends State<UserSearchWidget> {
   @override
   Widget build(BuildContext context) {
     List data = Users.l;
-
     String value = "Choose Company";
     return Container(
         child: Column(
@@ -111,7 +107,6 @@ class _UserSearchWidgetState extends State<UserSearchWidget> {
                   child: ListTile(
                     trailing: GestureDetector(
                         onTap: () {
-                          //TODO::SET THIS
                           Navigator.of(context).pushNamed('message_screen',
                               arguments: data[index]);
                         },
@@ -135,9 +130,11 @@ class _UserSearchWidgetState extends State<UserSearchWidget> {
               ],
             );
           },
+          shrinkWrap: true,
           itemCount: data.length,
         ),
       ],
     ));
   }
 }
+//TODO::ADD MODE VISE SEARCHING

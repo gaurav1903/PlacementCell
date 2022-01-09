@@ -14,59 +14,90 @@ class AllMessages extends StatefulWidget {
   _AllMessagesState createState() => _AllMessagesState();
 }
 
-//TODO;;SHOW ALL CONTACTS HERE AND SHOW THOSE ON TOP WHO HAVE SENT MESSGAGES THATS UNSEEN
+//TODO::SHOW ALL CONTACTS HERE AND SHOW THOSE ON TOP WHO HAVE SENT MESSGAGES THATS UNSEEN
 class _AllMessagesState extends State<AllMessages> {
   List order = []; //should contain only uid
   Set<String> done = {};
+  Future f = Future.value();
+  Future<void> func() async {
+    if (Allusers.l.isEmpty)
+      await FirebaseFirestore.instance.collection("users").get().then((val) {
+        var z = val.docs;
+        List temp = [];
+        z.forEach((element) {
+          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
+            temp.add(element.data());
+        });
+        Allusers.setl(temp);
+        Allusers.setpartialdata(temp);
+      });
+    else
+      return;
+  }
+
+  @override
+  void initState() {
+    f = func();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("chats")
-            .doc(User.userid.toString())
-            .collection("userchats")
-            .snapshots(),
+    return FutureBuilder(
+        future: f,
         builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting)
+          if (snap.connectionState != ConnectionState.done)
             return Center(child: CircularProgressIndicator());
-          var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
-          log(z.length.toString());
-          for (int i = 0; i < z.length; i++) {
-            if (done.contains(z[i].data()['sentby']) == false) {
-              order.add(z[i].data()['sentby']);
-              done.add(z[i].data()['sentby']);
-            }
-          }
-          for (int i = 0; i < Allusers.l.length; i++) {
-            if (done.contains(Allusers.l[i]['uid']) == false) {
-              order.add(Allusers.l[i]['uid']);
-              done.add(Allusers.l[i]['uid']);
-            }
-          }
-          log(order.toString() + " orderrrrrrrrrrrrrrrrrrrrrrr");
-          return ListView.builder(
-            itemBuilder: (ctx, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed("message_screen",
-                      arguments: Allusers.l.firstWhere((element) {
-                    return element['uid'] == order[index];
-                  }));
-                },
-                child: ListTile(
-                  tileColor: Colors.grey,
-                  leading: CircleAvatar(child: Icon(Icons.person)),
-                  title: Text(
-                      Allusers.l.firstWhere((e) {
-                        return e['uid'] == order[index];
-                      })['username'].toString(),
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-              );
-            },
-            itemCount: order.length,
-          );
+          return StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("chats")
+                  .doc(User.userid.toString())
+                  .collection("userchats")
+                  .snapshots(),
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting)
+                  return Center(child: CircularProgressIndicator());
+                var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
+                log(z.length.toString());
+                for (int i = 0; i < z.length; i++) {
+                  if (done.contains(z[i].data()['sentby']) == false) {
+                    order.add(z[i].data()['sentby']);
+                    done.add(z[i].data()['sentby']);
+                  }
+                }
+                for (int i = 0; i < Allusers.l.length; i++) {
+                  if (done.contains(Allusers.l[i]['uid']) == false) {
+                    order.add(Allusers.l[i]['uid']);
+                    done.add(Allusers.l[i]['uid']);
+                  }
+                }
+                log(order.toString() + " orderrrrrrrrrrrrrrrrrrrrrrr");
+                return ListView.builder(
+                  itemBuilder: (ctx, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed("message_screen",
+                            arguments: Allusers.l.firstWhere((element) {
+                          return element['uid'] == order[index];
+                        }));
+                      },
+                      child: ListTile(
+                        tileColor: Colors.grey,
+                        leading: CircleAvatar(child: Icon(Icons.person)),
+                        title: Text(
+                            Allusers.l.firstWhere((e) {
+                              return e['uid'] == order[index];
+                            })['username'].toString(),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    );
+                  },
+                  itemCount: order.length,
+                );
+              });
         });
   }
 }

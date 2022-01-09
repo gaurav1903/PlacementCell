@@ -46,6 +46,19 @@ class _SearchPageState extends State<SearchPage> {
         .then((value) {
       skills = value.data()?['skills'].toList();
     });
+    if (Userdata.l.isEmpty) {
+      await FirebaseFirestore.instance.collection("users").get().then((val) {
+        var z = val.docs;
+        List temp = [];
+        z.forEach((element) {
+          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
+            temp.add(element.data());
+        });
+        Userdata.setl(temp);
+        Userdata.setpartialdata(temp);
+        data = Userdata.l;
+      });
+    }
     log(data.length.toString() + "data len on search page");
     // return await FirebaseFirestore.instance.collection('users').get();
   }
@@ -53,6 +66,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
+        //TODO::CHANGE THIS
         future: getdata(),
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting)

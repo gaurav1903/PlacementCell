@@ -32,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
       skill5 = "Choose 5th skill";
   Future<void> _submit() async {
     String imageurl = "", resumeurl = "";
+    k.currentState?.validate();
     k.currentState?.save();
     final ref1 = FirebaseStorage.instance
         .ref("User")
@@ -105,6 +106,9 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: s == "CGPA" ? controllercgpa : controllerbatch,
             keyboardType: t,
+            validator: (val) {
+              if (val == null || val.isEmpty) return "can't be left empty";
+            },
             decoration: InputDecoration(helperText: "Enter " + s),
             onFieldSubmitted: (val) {
               if (s == "CGPA")
@@ -434,58 +438,68 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ],
                                 ),
 
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    DropdownButton(
-                                        value: domainval,
-                                        onChanged: (val) {
-                                          setState(() {
-                                            domainval = val.toString();
-                                          });
-                                        },
-                                        items: [
-                                              DropdownMenuItem(
-                                                  child: Text("Choose Domain"),
-                                                  value: "Choose Domain")
-                                            ] +
-                                            domain.map((e) {
-                                              return DropdownMenuItem(
-                                                child: Text(e.toString()),
-                                                value: e.toString(),
-                                              );
-                                            }).toList()),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          OutlinedButton(
-                                              onPressed: () {
-                                                FilePicker.platform.pickFiles(
-                                                    dialogTitle:
-                                                        "Choose Resume pdf",
-                                                    allowCompression: true,
-                                                    type: FileType.custom,
-                                                    allowedExtensions: [
-                                                      "pdf"
-                                                    ]).then((value) {
-                                                  if (value != null)
-                                                    setState(() {
-                                                      resume = value;
-                                                    });
-                                                });
-                                              },
-                                              child: resume == null
-                                                  ? Text("Add Resume")
-                                                  : Text("Change Resume")),
-                                          SizedBox(width: 10),
-                                          if (resume != null)
-                                            Icon(Icons.file_present)
-                                          else
-                                            Icon(Icons.upload_file_outlined)
-                                        ])
-                                  ],
+                                Container(
+                                  height: 100,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: DropdownButtonFormField(
+                                            validator: (value) {
+                                              if (value == "Choose Domain")
+                                                return "Domain Not Selected";
+                                            },
+                                            value: domainval,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                domainval = val.toString();
+                                              });
+                                            },
+                                            items: [
+                                                  DropdownMenuItem(
+                                                      child:
+                                                          Text("Choose Domain"),
+                                                      value: "Choose Domain")
+                                                ] +
+                                                domain.map((e) {
+                                                  return DropdownMenuItem(
+                                                    child: Text(e.toString()),
+                                                    value: e.toString(),
+                                                  );
+                                                }).toList()),
+                                      ),
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            OutlinedButton(
+                                                onPressed: () {
+                                                  FilePicker.platform.pickFiles(
+                                                      dialogTitle:
+                                                          "Choose Resume pdf",
+                                                      allowCompression: true,
+                                                      type: FileType.custom,
+                                                      allowedExtensions: [
+                                                        "pdf"
+                                                      ]).then((value) {
+                                                    if (value != null)
+                                                      setState(() {
+                                                        resume = value;
+                                                      });
+                                                  });
+                                                },
+                                                child: resume == null
+                                                    ? Text("Add Resume")
+                                                    : Text("Change Resume")),
+                                            SizedBox(width: 10),
+                                            if (resume != null)
+                                              Icon(Icons.file_present)
+                                            else
+                                              Icon(Icons.upload_file_outlined)
+                                          ])
+                                    ],
+                                  ),
                                 ), //domain and add resume
                                 SizedBox(height: 10),
                                 TextButton(
