@@ -19,6 +19,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var PickedImage;
   var resume;
+  String bio = "";
   bool isloading = false;
   var batchans;
   var cgpa;
@@ -72,8 +73,10 @@ class _ProfilePageState extends State<ProfilePage> {
       "domain": domainval,
       "CGPA": double.parse(cgpa),
       "batch": int.parse(batchans),
-      "skills": l
+      "skills": l,
+      "bio": bio
     });
+    User.bio = bio;
     User.cgpa = double.parse(cgpa);
     User.domain = domainval;
     User.batch = int.parse(batchans);
@@ -185,7 +188,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: PickedImage == null
                                   ? User.imageurl != null &&
                                           User.imageurl.toString().isNotEmpty
-                                      ? Image.network(User.imageurl)
+                                      ? FadeInImage(
+                                          image: NetworkImage(User.imageurl),
+                                          placeholder:
+                                              AssetImage('assets/loading.jpg'),
+                                        )
                                       : Image.asset('assets/selectImage.jpg',
                                           fit: BoxFit.fitWidth)
                                   : Image.file(
@@ -209,6 +216,24 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(
+                                    "Bio",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 3),
+                                  Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          50,
+                                      child: TextFormField(
+                                        initialValue: User.bio,
+                                        onChanged: (val) {
+                                          bio = val.toString();
+                                        },
+                                        decoration: InputDecoration(
+                                            helperText: "Enter Bio"),
+                                      )),
+                                  SizedBox(height: 20),
                                   Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment:
