@@ -110,7 +110,8 @@ class _UserSearchWidgetState extends State<UserSearchWidget> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('singleuser');
+                    Navigator.of(context)
+                        .pushNamed('singleuser', arguments: data[index]);
                   },
                   child: ListTile(
                     trailing: GestureDetector(

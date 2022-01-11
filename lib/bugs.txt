@@ -2,8 +2,8 @@ Current bugs
 3)on profile page data must be made temporary
 4)when click on request otp the data disappears
 5)TODO::REMOVE LOGOUT FUNCTIONALITY PERMANENTLY
-7)TODO::single user page
-8)TODO::LOGIN/LOGOUT TEST AGAIN
+6) todo::data overwrite on profile page bug
+
 
 
 

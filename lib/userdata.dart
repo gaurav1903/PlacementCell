@@ -8,6 +8,7 @@ enum Mode { Student, PlacementOfficer, Recruiter }
 class User {
   final z = FirebaseAuth.instance.currentUser;
   static final userid = FirebaseAuth.instance.currentUser?.uid;
+  static List skills = [];
   static var username,
       batch,
       mode,
@@ -35,6 +36,7 @@ class User {
     // complete = userdata['complete'];
     username = userdata['username'];
     batch = userdata['batch'];
+    skills = userdata['skills'];
     imageurl = userdata['imageurl'];
     bio = userdata['bio'];
     batch = userdata['batch'];

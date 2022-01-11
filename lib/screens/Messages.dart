@@ -95,7 +95,8 @@ class _MessagesState extends State<Messages> {
                                 },
                                 icon: Icon(Icons.arrow_back)),
                             CircleAvatar(
-                              child: user["imageurl"].toString().isEmpty
+                              child: user["imageurl"] == null ||
+                                      user['imageurl'].toString().isEmpty
                                   ? Icon(Icons.person)
                                   : ClipRRect(
                                       borderRadius: BorderRadius.circular(20),

@@ -19,10 +19,10 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var PickedImage;
   var resume;
-  String bio = "";
+  String bio = User.bio;
   bool isloading = false;
-  var batchans;
-  var cgpa;
+  var batchans = User.batch;
+  var cgpa = User.cgpa;
   final k = GlobalKey<FormState>();
   List skills = [];
   List domain = [];
@@ -34,9 +34,11 @@ class _ProfilePageState extends State<ProfilePage> {
       skill4 = "Choose 4th skill",
       skill5 = "Choose 5th skill";
   Future<void> _submit() async {
-    String imageurl = "", resumeurl = "";
+    log("submit ran");
+    String imageurl = User.imageurl == null ? "" : User.imageurl,
+        resumeurl = User.resumeurl == null ? "" : User.resumeurl;
     k.currentState?.save();
-    log("isloading " + isloading.toString());
+    // log("isloading " + isloading.toString());
     final ref1 = FirebaseStorage.instance
         .ref("User")
         .child(User().uid)
@@ -64,22 +66,24 @@ class _ProfilePageState extends State<ProfilePage> {
       await ref2.putFile(File(path)).then((resumeresult) async {
         resumeurl = await ref2.getDownloadURL();
       });
+    log("reached final destination");
+    log(cgpa.toString() + "chek " + batchans.toString());
     await FirebaseFirestore.instance
         .collection("users")
-        .doc(User().uid)
+        .doc(User.userid)
         .update({
       "imageurl": imageurl,
       "resumeurl": resumeurl,
       "domain": domainval,
-      "CGPA": double.parse(cgpa),
-      "batch": int.parse(batchans),
+      "CGPA": double.parse(cgpa.toString()),
+      "batch": int.parse(batchans.toString()),
       "skills": l,
       "bio": bio
     });
     User.bio = bio;
-    User.cgpa = double.parse(cgpa);
+    User.cgpa = cgpa;
     User.domain = domainval;
-    User.batch = int.parse(batchans);
+    User.batch = batchans;
     log("now this set state will run");
     setState(() {
       isloading = false;
@@ -129,9 +133,9 @@ class _ProfilePageState extends State<ProfilePage> {
             decoration: InputDecoration(helperText: "Enter " + s),
             onFieldSubmitted: (val) {
               if (s == "CGPA")
-                cgpa = val;
+                cgpa = double.parse(val);
               else
-                batchans = val;
+                batchans = int.parse(val);
 
               FocusScope.of(context).unfocus();
             },
@@ -143,9 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
             },
             onChanged: (val) {
               if (s == "CGPA")
-                cgpa = val;
+                cgpa = double.parse(val);
               else
-                batchans = val;
+                batchans = int.parse(val);
             },
           )
         ],

@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^1.10.5
+  syncfusion_flutter_pdfviewer: ^19.4.42-beta
   provider: ^6.0.1
   firebase_auth: ^3.3.3
   cloud_firestore: ^3.1.4

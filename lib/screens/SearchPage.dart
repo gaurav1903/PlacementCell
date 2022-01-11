@@ -47,7 +47,11 @@ class _SearchPageState extends State<SearchPage> {
       skills = value.data()?['skills'].toList();
     });
     if (Userdata.l.isEmpty) {
-      await FirebaseFirestore.instance.collection("users").get().then((val) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .where("role", isEqualTo: "Student")
+          .get()
+          .then((val) {
         var z = val.docs;
         List temp = [];
         z.forEach((element) {
@@ -288,7 +292,8 @@ class _SearchPageState extends State<SearchPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context).pushNamed('singleuser');
+                              Navigator.of(context).pushNamed('singleuser',
+                                  arguments: data[index]);
                             },
                             child: ListTile(
                               trailing: GestureDetector(
