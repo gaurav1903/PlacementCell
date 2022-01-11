@@ -20,18 +20,20 @@ class _AllMessagesState extends State<AllMessages> {
   Set<String> done = {};
   Future f = Future.value();
   Future<void> func() async {
-    if (Allusers.l.isEmpty)
+    log(Allusers.l.length.toString() + "all users len in func on allmsgs");
+    if (Allusers.l.isEmpty) {
       await FirebaseFirestore.instance.collection("users").get().then((val) {
         var z = val.docs;
         List temp = [];
         z.forEach((element) {
-          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
-            temp.add(element.data());
+          if ((element.data() as Map<String, dynamic>).containsKey("batch") ||
+              (element.data().containsKey("company"))) temp.add(element.data());
         });
         Allusers.setl(temp);
         Allusers.setpartialdata(temp);
       });
-    else
+      log("func ran on allmessages");
+    } else
       return;
   }
 
@@ -58,6 +60,9 @@ class _AllMessagesState extends State<AllMessages> {
               builder: (context, snap) {
                 if (snap.connectionState == ConnectionState.waiting)
                   return Center(child: CircularProgressIndicator());
+                log(Allusers.l.length.toString() +
+                    "allusers.l " +
+                    Allusers.l[0].toString());
                 var z = (snap.data as QuerySnapshot<Map<String, dynamic>>).docs;
                 log(z.length.toString());
                 for (int i = 0; i < z.length; i++) {
@@ -67,7 +72,8 @@ class _AllMessagesState extends State<AllMessages> {
                   }
                 }
                 for (int i = 0; i < Allusers.l.length; i++) {
-                  if (done.contains(Allusers.l[i]['uid']) == false) {
+                  if (done.contains(Allusers.l[i]['uid']) == false &&
+                      Allusers.l[i]['uid'] != User.userid) {
                     order.add(Allusers.l[i]['uid']);
                     done.add(Allusers.l[i]['uid']);
                   }
@@ -86,9 +92,12 @@ class _AllMessagesState extends State<AllMessages> {
                         tileColor: Colors.grey,
                         leading: CircleAvatar(child: Icon(Icons.person)),
                         title: Text(
-                            Allusers.l.firstWhere((e) {
-                              return e['uid'] == order[index];
-                            })['username'].toString(),
+                            Allusers.l
+                                .firstWhere((e) {
+                                  return e['uid'] == order[index];
+                                })['username']
+                                .toString()
+                                .toUpperCase(),
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold)),

@@ -26,6 +26,7 @@ class _UserSearchPageState extends State<UserSearchPage> {
           if ((element.data() as Map<String, dynamic>).containsKey("company"))
             temp.add(element.data());
         });
+        log("l changed hhere" + temp.toString());
         Users.setl(temp);
         Users.setpartialdata(temp);
       });
