@@ -25,7 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final k = GlobalKey<FormState>();
   List skills = [];
   List domain = [];
-  var skill1 = "Choose 1st skill", domainval = "Choose Domain";
+  var skill1 = "Choose 1st skill",
+      domainval =
+          User.domain == null ? "Choose Domain" : User.domain.toString();
   var skill2 = "Choose 2nd skill",
       skill3 = "Choose 3rd skill",
       skill4 = "Choose 4th skill",
@@ -47,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
           .putFile(File((PickedImage as XFile).path))
           .then((imageresult) async {
         imageurl = await ref1.getDownloadURL();
+        User.imageurl = imageurl;
       });
     var path = null;
     if (resume != null) path = (resume as FilePickerResult).paths[0];
@@ -71,6 +74,9 @@ class _ProfilePageState extends State<ProfilePage> {
       "batch": int.parse(batchans),
       "skills": l
     });
+    User.cgpa = double.parse(cgpa);
+    User.domain = domainval;
+    User.batch = int.parse(batchans);
     log("now this set state will run");
     setState(() {
       isloading = false;
@@ -95,8 +101,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return;
   }
 
-  final controllerbatch = TextEditingController();
-  final controllercgpa = TextEditingController();
   Widget Field(String s, TextInputType t) {
     return Container(
       width: 100,
@@ -108,7 +112,13 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           TextFormField(
-            controller: s == "CGPA" ? controllercgpa : controllerbatch,
+            initialValue: s == "CGPA"
+                ? User.cgpa == null
+                    ? null
+                    : User.cgpa.toString()
+                : User.batch == null
+                    ? null
+                    : User.batch.toString(),
             keyboardType: t,
             validator: (val) {
               if (val == null || val.isEmpty) return "can't be left empty";

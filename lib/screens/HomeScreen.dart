@@ -59,54 +59,6 @@ class _HomePageState extends State<HomePage> {
       else if (admin.User.mode != admin.Mode.Student &&
           admin.User.company.toString().isEmpty) givealert();
     });
-    //DO THIS PART ON SEARCH PAGE OR MESSGAGE PAGE
-    // if (admin.User.mode == admin.Mode.Student) {
-    //   await FirebaseFirestore.instance
-    //       .collection("officials")
-    //       .get()
-    //       .then((val) {
-    //     var z = val.docs;
-    //     List temp = [];
-    //     z.forEach((element) {
-    //       if (element.data().containsKey("company")) temp.add(element.data());
-    //     });
-    //     users.setl(temp);
-    //     users.setpartialdata(temp);
-    //     log("running z.docs");
-    //   });
-    //   // await FirebaseFirestore.instance
-    //   //     .collection("users")
-    //   //     .where("uid", isEqualTo: admin.User.userid)
-    //   //     .get()
-    //   //     .then((value) {
-    //   //   var z = value.docs[0].data();
-    //   //   admin.User.setdata(z);
-    //   //   if (admin.User.batch == null) givealert();
-    //   // });
-    // } else {
-    //   log("offcial mode ");
-    //   await FirebaseFirestore.instance.collection("users").get().then((val) {
-    //     var z = val.docs;
-    //     List temp = [];
-    //     z.forEach((element) {
-    //       if ((element.data() as Map<String, dynamic>).containsKey("batch"))
-    //         temp.add(element.data());
-    //     });
-    //     users.setl(temp);
-    //     users.setpartialdata(temp);
-    //     log("running z.docs");
-    //   });
-    //   // await FirebaseFirestore.instance
-    //   //     .collection("officials")
-    //   //     .where("uid", isEqualTo: admin.User.userid)
-    //   //     .get()
-    //   //     .then((value) {
-    //   //   var z = value.docs[0].data();
-    //   //   admin.User.setdata(z);
-    //   //   log("setting data called on homescreen");
-    //   //   if (admin.User.company == null) givealert();
-    //   // });
-    // }
   }
 
   Future f = Future.value();

@@ -11,6 +11,8 @@ class User {
   static var username,
       batch,
       mode,
+      cgpa,
+      resumeurl,
       domain,
       bio,
       imageurl,
@@ -35,6 +37,8 @@ class User {
     batch = userdata['batch'];
     imageurl = userdata['imageurl'];
     bio = userdata['bio'];
+    batch = userdata['batch'];
+    cgpa = userdata['CGPA'];
     company = userdata['company'];
     var temp = userdata['role'];
     domain = userdata['domain'];
