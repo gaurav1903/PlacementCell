@@ -75,10 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
       "imageurl": imageurl,
       "resumeurl": resumeurl,
       "domain": domainval,
-      "CGPA": double.parse(cgpa.toString()),
-      "batch": int.parse(batchans.toString()),
+      "CGPA": cgpa != null ? double.parse(cgpa.toString()) : 0.0,
+      "batch": batchans != null ? int.parse(batchans.toString()) : 0,
       "skills": l,
-      "bio": bio
+      if (bio != null) "bio": bio
     });
     User.bio = bio;
     User.cgpa = cgpa;

@@ -32,26 +32,26 @@ class User {
 //TODO::SET ALL THE DATA HERE
   //CALL FROM HOMEPAGE AND FETCH ALL DATA AND THEN SET HERE
   static void setdata(Map<String, dynamic> userdata) {
-    // log(userdata.toString() + "userdata");
+    log(userdata.toString() + "userdata");
     // complete = userdata['complete'];
     username = userdata['username'];
-    batch = userdata['batch'];
-    skills = userdata['skills'];
-    imageurl = userdata['imageurl'];
-    bio = userdata['bio'];
-    batch = userdata['batch'];
-    cgpa = userdata['CGPA'];
-    company = userdata['company'];
     var temp = userdata['role'];
-    domain = userdata['domain'];
-    // log("Data fetching is done" + username.toString());
-    log("temp   " + temp.toString());
     if (temp == 'Student')
       mode = Mode.Student;
     else if (temp == 'Recruiter')
       mode = Mode.Recruiter;
     else
       mode = Mode.PlacementOfficer;
+    if (userdata.containsKey("imageurl")) imageurl = userdata['imageurl'];
+    if (userdata.containsKey("bio")) bio = userdata['bio'];
+    if (userdata.containsKey("batch")) batch = userdata['batch'];
+    if (userdata.containsKey("skills")) skills = userdata['skills'];
+
+    if (userdata.containsKey("CGPA")) cgpa = userdata['CGPA'];
+    if (userdata.containsKey("company")) company = userdata['company'];
+    if (userdata.containsKey("domain")) domain = userdata['domain'];
+    // log("Data fetching is done" + username.toString());
+    log("temp   " + temp.toString());
   }
 
   // Future<void> fetchdata() async {

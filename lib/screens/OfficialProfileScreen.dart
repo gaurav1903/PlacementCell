@@ -16,10 +16,10 @@ class OfficialProfileScreen extends StatefulWidget {
 class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
   var PickedImage;
   bool isloading = false;
-  String bio = "";
-  String company = "";
+  var bio = User.bio;
+  var company = User.company;
   Future<void> _submit() async {
-    String imageurl = "";
+    String imageurl = User.imageurl;
 
     key.currentState?.validate();
     key.currentState?.save();
@@ -34,9 +34,9 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
         imageurl = await ref1.getDownloadURL();
       });
     FirebaseFirestore.instance.collection("users").doc(User.userid).update({
-      "imageurl": imageurl,
-      'bio': bio,
-      'company': company
+      "imageurl": imageurl == null ? "" : imageurl,
+      'bio': bio == null ? "" : bio,
+      'company': company == null ? "" : company
     }); //TODO::add this in company list too
     setState(() {
       isloading = false;
@@ -46,6 +46,7 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
   final key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    log(company.toString());
     log(User.mode.toString() + "       mode");
     return (isloading == true)
         ? Center(child: CircularProgressIndicator())
@@ -94,9 +95,8 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
                           : Text("College Name"),
                       TextFormField(
                         maxLines: 1,
-                        initialValue: User.company == null
-                            ? null
-                            : User.company.toString(),
+                        initialValue:
+                            company == null ? null : company.toString(),
                         validator: (val) {
                           if (val == null || val.isEmpty)
                             return "Can't be Empty";
