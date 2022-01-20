@@ -16,11 +16,12 @@ class OfficialProfileScreen extends StatefulWidget {
 class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
   var PickedImage;
   bool isloading = false;
-  var bio = User.bio;
-  var company = User.company;
+  var bio = User.bio == null ? "" : User.bio;
+  var company = User.company == null ? "" : User.company;
+  String imageurl = User.imageurl == null ? "" : User.imageurl;
   Future<void> _submit() async {
-    String imageurl = User.imageurl;
-
+    log("submit running in officialprofilescreen");
+    log(bio.toString());
     key.currentState?.validate();
     key.currentState?.save();
     final ref1 = FirebaseStorage.instance
@@ -33,14 +34,21 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
           .then((imageresult) async {
         imageurl = await ref1.getDownloadURL();
       });
-    FirebaseFirestore.instance.collection("users").doc(User.userid).update({
-      "imageurl": imageurl == null ? "" : imageurl,
-      'bio': bio == null ? "" : bio,
-      'company': company == null ? "" : company
-    }); //TODO::add this in company list too
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(User.userid)
+        .update({"imageurl": imageurl, 'bio': bio, 'company': company});
+    //TODO::add this in company list too
+    User.bio = bio;
+    User.company = company;
     setState(() {
       isloading = false;
     });
+    const snackbar = SnackBar(
+      content: const Text("Profile Saved"),
+      duration: Duration(seconds: 3),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   final key = GlobalKey<FormState>();
@@ -88,6 +96,9 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
                         maxLines: 20,
                         minLines: 1,
                         decoration: InputDecoration(helperText: "BIO"),
+                        onSaved: (val) {
+                          bio = val.toString();
+                        },
                       ),
                       SizedBox(height: 50),
                       User.mode == Mode.Recruiter

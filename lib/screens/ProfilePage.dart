@@ -19,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var PickedImage;
   var resume;
-  String bio = User.bio;
+  var bio = User.bio;
   bool isloading = false;
   var batchans = User.batch;
   var cgpa = User.cgpa;

@@ -75,7 +75,7 @@ class _AuthFormState extends State<AuthForm> {
                           onSaved: (val) {
                             if (val != null) _username = val;
                           },
-                          decoration: InputDecoration(labelText: 'Username'),
+                          decoration: InputDecoration(labelText: 'Full Name'),
                         ),
                       TextFormField(
                         key: ValueKey('email'),

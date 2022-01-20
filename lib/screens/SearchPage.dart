@@ -5,6 +5,7 @@ import 'dart:developer';
 import '../widgets/full_userdata.dart' as Userdata;
 import 'package:placement_cell/userdata.dart';
 
+//FOR OFFICIALS
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -47,21 +48,24 @@ class _SearchPageState extends State<SearchPage> {
       skills = value.data()?['skills'].toList();
     });
     if (Userdata.l.isEmpty) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .where("role", isEqualTo: "Student")
-          .get()
-          .then((val) {
-        var z = val.docs;
-        List temp = [];
-        z.forEach((element) {
-          if ((element.data() as Map<String, dynamic>).containsKey("batch"))
-            temp.add(element.data());
+      //TODO::NOW TEMP HAS BOTH RECRUITERS AND STUDENTS
+      if (User.mode == Mode.PlacementOfficer)
+        await FirebaseFirestore.instance
+            .collection("users")
+            .where("role", isNotEqualTo: "PlacementOfficer")
+            .get()
+            .then((val) {
+          var z = val.docs;
+          List temp = [];
+          z.forEach((element) {
+            Map<String, dynamic> m = element.data() as Map<String, dynamic>;
+            if (m.containsKey("batch") || m.containsKey("company"))
+              temp.add(element.data());
+          });
+          Userdata.setl(temp);
+          Userdata.setpartialdata(temp);
+          data = Userdata.l;
         });
-        Userdata.setl(temp);
-        Userdata.setpartialdata(temp);
-        data = Userdata.l;
-      });
     }
     log(data.length.toString() + "data len on search page");
     // return await FirebaseFirestore.instance.collection('users').get();
@@ -91,8 +95,8 @@ class _SearchPageState extends State<SearchPage> {
                       iconDisabledColor: Colors.black,
                       value: s,
                       onChanged: (s1) {
-                        s = s1.toString();
                         setState(() {
+                          s = s1.toString();
                           data = Userdata.l;
                         });
                       },

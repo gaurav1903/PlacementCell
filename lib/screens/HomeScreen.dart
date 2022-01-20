@@ -53,11 +53,10 @@ class _HomePageState extends State<HomePage> {
       admin.User.setdata(z);
     }).then((value) {
       log(admin.User.mode.toString() + " mode at home page");
-      if (admin.User.mode == admin.Mode.Student &&
-          admin.User.batch.toString().isEmpty)
+      if (admin.User.mode == admin.Mode.Student && admin.User.batch == null)
         givealert();
       else if (admin.User.mode != admin.Mode.Student &&
-          admin.User.company.toString().isEmpty) givealert();
+          admin.User.company == null) givealert();
     });
   }
 
