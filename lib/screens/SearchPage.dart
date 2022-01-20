@@ -66,6 +66,27 @@ class _SearchPageState extends State<SearchPage> {
           Userdata.setpartialdata(temp);
           data = Userdata.l;
         });
+      else
+
+      ///recruitrer
+      {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .where("role", isNotEqualTo: "Recruiter")
+            .get()
+            .then((val) {
+          var z = val.docs;
+          List temp = [];
+          z.forEach((element) {
+            Map<String, dynamic> m = element.data() as Map<String, dynamic>;
+            if (m.containsKey("batch") || m.containsKey("company"))
+              temp.add(element.data());
+          });
+          Userdata.setl(temp);
+          Userdata.setpartialdata(temp);
+          data = Userdata.l;
+        });
+      }
     }
     log(data.length.toString() + "data len on search page");
     // return await FirebaseFirestore.instance.collection('users').get();
@@ -80,8 +101,10 @@ class _SearchPageState extends State<SearchPage> {
           if (snap.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           log("data" + data.toString());
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
+          return Container(
+            padding: EdgeInsets.all(20),
+            // margin: EdgeInsets.all(10),
+            color: Colors.green.shade100,
             child: Column(
               children: [
                 Row(children: [
@@ -325,7 +348,8 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                           SizedBox(
                             height: 2,
-                          )
+                          ),
+                          Divider()
                         ],
                       );
                     },

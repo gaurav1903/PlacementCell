@@ -25,8 +25,9 @@ class SingleUser extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 5),
-                      borderRadius: BorderRadius.circular(70)),
+                    border: Border.all(color: Colors.black, width: 5),
+                    borderRadius: BorderRadius.circular(75),
+                  ),
                   child: CircleAvatar(
                     backgroundColor: Colors.grey,
                     minRadius: 70,
