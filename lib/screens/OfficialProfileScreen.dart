@@ -41,6 +41,7 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
     //TODO::add this in company list too
     User.bio = bio;
     User.company = company;
+    User.imageurl = imageurl;
     setState(() {
       isloading = false;
     });
@@ -66,17 +67,28 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
                   Container(
                     height: 250,
                     margin: EdgeInsets.all(20),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
-                      child: PickedImage == null
-                          ? User.imageurl != null &&
-                                  User.imageurl.toString().isNotEmpty
-                              ? Image.network(User.imageurl)
-                              : Image.asset('assets/selectImage.jpg',
-                                  fit: BoxFit.fitWidth)
-                          : Image.file(File((PickedImage as XFile).path),
-                              width: MediaQuery.of(context).size.width,
-                              fit: BoxFit.fitWidth),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: PickedImage == null
+                            ? User.imageurl != null &&
+                                    User.imageurl.toString().isNotEmpty
+                                ? Image.network(User.imageurl,
+                                    height: 250,
+                                    width: MediaQuery.of(context).size.width)
+                                : Image.asset(
+                                    'assets/selectImage.jpg',
+                                    fit: BoxFit.fitWidth,
+                                    height: 250,
+                                  )
+                            : Image.file(File((PickedImage as XFile).path),
+                                width: MediaQuery.of(context).size.width,
+                                height: 250,
+                                fit: BoxFit.fitWidth),
+                      ),
                       onTap: () {
                         ImagePicker.platform
                             .getImage(source: ImageSource.gallery)

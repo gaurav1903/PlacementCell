@@ -20,6 +20,7 @@ class DashBoard extends StatelessWidget {
             var z = snap.data as QuerySnapshot<Map<String, dynamic>>;
             log(z.docs.length.toString());
             return Container(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
               color: Colors.green.shade200,
               child: Stack(children: [
                 ListView.builder(
