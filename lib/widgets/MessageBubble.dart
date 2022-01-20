@@ -42,11 +42,16 @@ class MessageBubble extends StatelessWidget {
                 ),
                 child: Container(
                     width: 300,
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.all(10),
-                    child: FadeInImage(
-                        placeholder: AssetImage('assets/loading.jpg'),
-                        image: NetworkImage(url)))),
+                    // padding: EdgeInsets.all(10),
+                    // margin: EdgeInsets.all(10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: FadeInImage(
+                          placeholder: AssetImage(
+                            'assets/loading.jpg',
+                          ),
+                          image: NetworkImage(url)),
+                    ))),
           ),
         SizedBox(height: 10)
       ],

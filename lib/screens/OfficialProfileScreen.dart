@@ -58,81 +58,88 @@ class _OfficialProfileScreenState extends State<OfficialProfileScreen> {
     log(User.mode.toString() + "       mode");
     return (isloading == true)
         ? Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  height: 250,
-                  width: MediaQuery.of(context).size.width,
-                  child: GestureDetector(
-                    child: PickedImage == null
-                        ? User.imageurl != null &&
-                                User.imageurl.toString().isNotEmpty
-                            ? Image.network(User.imageurl)
-                            : Image.asset('assets/selectImage.jpg',
-                                fit: BoxFit.fitWidth)
-                        : Image.file(File((PickedImage as XFile).path),
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.fitWidth),
-                    onTap: () {
-                      ImagePicker.platform
-                          .getImage(source: ImageSource.gallery)
-                          .then((value) {
-                        setState(() {
-                          PickedImage = value;
+        : Container(
+            color: Colors.green.shade100,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    height: 250,
+                    margin: EdgeInsets.all(20),
+                    width: MediaQuery.of(context).size.width,
+                    child: GestureDetector(
+                      child: PickedImage == null
+                          ? User.imageurl != null &&
+                                  User.imageurl.toString().isNotEmpty
+                              ? Image.network(User.imageurl)
+                              : Image.asset('assets/selectImage.jpg',
+                                  fit: BoxFit.fitWidth)
+                          : Image.file(File((PickedImage as XFile).path),
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.fitWidth),
+                      onTap: () {
+                        ImagePicker.platform
+                            .getImage(source: ImageSource.gallery)
+                            .then((value) {
+                          setState(() {
+                            PickedImage = value;
+                          });
                         });
-                      });
-                    },
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Form(
-                    key: key,
-                    child: Column(children: [
-                      Text('BIO'),
-                      TextFormField(
-                        initialValue: User.bio,
-                        maxLines: 20,
-                        minLines: 1,
-                        decoration: InputDecoration(helperText: "BIO"),
-                        onSaved: (val) {
-                          bio = val.toString();
-                        },
-                      ),
-                      SizedBox(height: 50),
-                      User.mode == Mode.Recruiter
-                          ? Text("Company")
-                          : Text("College Name"),
-                      TextFormField(
-                        maxLines: 1,
-                        initialValue:
-                            company == null ? null : company.toString(),
-                        validator: (val) {
-                          if (val == null || val.isEmpty)
-                            return "Can't be Empty";
-                          return null;
-                        },
-                        onSaved: (val) {
-                          company = val.toString();
-                        },
-                        decoration: InputDecoration(
-                            helperText: User.mode == Mode.Recruiter
-                                ? "Company"
-                                : "College Name"),
-                      )
-                    ]),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Form(
+                      key: key,
+                      child: Column(children: [
+                        Text('BIO'),
+                        TextFormField(
+                          initialValue: User.bio,
+                          maxLines: 20,
+                          minLines: 1,
+                          decoration: InputDecoration(helperText: "BIO"),
+                          onSaved: (val) {
+                            bio = val.toString();
+                          },
+                        ),
+                        SizedBox(height: 50),
+                        User.mode == Mode.Recruiter
+                            ? Text("Company")
+                            : Text("College Name"),
+                        TextFormField(
+                          maxLines: 1,
+                          initialValue:
+                              company == null ? null : company.toString(),
+                          validator: (val) {
+                            if (val == null || val.isEmpty)
+                              return "Can't be Empty";
+                            return null;
+                          },
+                          onSaved: (val) {
+                            company = val.toString();
+                          },
+                          decoration: InputDecoration(
+                              helperText: User.mode == Mode.Recruiter
+                                  ? "Company"
+                                  : "College Name"),
+                        )
+                      ]),
+                    ),
                   ),
-                ),
-                TextButton(
+                  ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
                     child: Text("Submit"),
                     onPressed: () {
                       setState(() {
                         isloading = true;
                       });
                       _submit();
-                    })
-              ],
+                    },
+                  ),
+                  SizedBox(height: 20)
+                ],
+              ),
             ),
           );
   }

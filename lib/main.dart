@@ -28,7 +28,15 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-            primaryColor: Color(0xFF418C66), canvasColor: Colors.white),
+          primaryColor: Color(0xFF418C66),
+          canvasColor: Colors.white,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+                // textStyle: TextStyle(color: Colors.black),
+                primary: Colors.white,
+                onPrimary: Colors.black),
+          ),
+        ),
         routes: {
           'homepage': (context) => HomePage(),
           'authscreen': (context) => AuthScreen(),
